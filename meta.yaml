@@ -1,0 +1,8 @@
+Shell codes:
+    nest new login-system
+    cd login-system/
+    npm install @nestjs/mongoose mongoose @nestjs/passport passport passport-jwt bcryptjs @nestjs/jwt
+    npm install --save-dev @types/passport-jwt @types/bcryptjs
+    npm install bcrypt
+    npm install --save-dev @types/bcrypt
+    npm install @nestjs/config
