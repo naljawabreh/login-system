@@ -11,8 +11,8 @@ export class UsersService {
     return this.userModel.findOne({ email }).exec();
   }
 
-  async create(username: string, email: string, password: string): Promise<User> {
-    const user = new this.userModel({ username, email, password });
+  async create(username: string, email: string, password: string, firstName: string, lastName: string, phoneNumber: string, birthdate: Date, language?: string, photo?: string): Promise<User> {
+    const user = new this.userModel({ username, email, password, firstName, lastName, phoneNumber, birthdate, language, photo });
     return user.save();
   }
 }

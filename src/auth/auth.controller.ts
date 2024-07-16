@@ -8,12 +8,12 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('register')
-  async register(@Body() registerDto: RegisterDto) {
+  @Post('/register')
+  async register(@Body() registerDto: RegisterDto): Promise<{ accessToken: string }> {
     return this.authService.register(registerDto);
   }
 
-  @Post('login')
+  @Post('/login')
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }

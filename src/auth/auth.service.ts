@@ -4,7 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { User } from '../users/schemas/user.schema';
+import { UserDocument } from '../users/schemas/user.schema';
 
 @Injectable()
 export class AuthService {
@@ -13,9 +13,15 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(registerDto: RegisterDto): Promise<User> {
-    const { username, email, password } = registerDto;
-    return this.usersService.create(username, email, password);
+  async register(registerDto: RegisterDto): Promise<{ accessToken: string }> {
+    const { username, email, password, firstName, lastName, phoneNumber, birthdate, language, photo } = registerDto;
+    // const hashedPassword = await bcrypt.hash(password, 10)
+    const user = this.usersService.create(username, email, password, firstName, lastName, phoneNumber, birthdate, language, photo);
+    
+    const payload = { id: user._id };
+    const accessToken = this.jwtService.sign(payload);
+  
+    return { accessToken };
   }
 
   async login(loginDto: LoginDto): Promise<{ accessToken: string }> {
