@@ -17,8 +17,17 @@ export class User {
   @Prop({ required: true })
   password: string;
 
+  @Prop({ required: true, enum: ['pending', 'completed'], default: 'pending' })
+  registrationState: string;
+
   comparePassword: (candidatePassword: string) => Promise<boolean>;
-  
+
+  @Prop()
+  otp: string;
+
+  @Prop()
+  otpExpires: Date;
+
   @Prop({ required: true })
   firstName: string;
 
@@ -50,9 +59,7 @@ UserSchema.pre<UserDocument>('save', async function (next) {
   if (!user.isModified('password')) return next();
 
   try {
-    // Generate a salt
     const salt = await bcrypt.genSalt(10);
-    // Hash the password using the new salt
     user.password = await bcrypt.hash(user.password, salt);
     next();
   } catch (err) {
