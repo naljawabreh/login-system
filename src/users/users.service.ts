@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
@@ -37,19 +37,21 @@ export class UsersService {
     console.log(`OTP for user ${user.username} is ${otp}`);
   }
 
-  async verifyOtp(email: string, otp: string): Promise<UserDocument> {
-    const user = await this.findOneByEmail(email);
+  async verifyOtp(userId: string, otp: string): Promise<UserDocument> {
+    const user = await this.findOneById(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundException(`User with ID ${userId} not found`);
     }
 
-    if (user.otp === otp && user.otpExpires > new Date()) {
-      user.registrationState = 'completed';
-      user.otp = undefined;
-      user.otpExpires = undefined;
-      return user.save();
-    } else {
-      throw new Error('Invalid or expired OTP');
+    if (user.otp !== otp || user.otpExpires < new Date()) {
+      throw new UnauthorizedException('Invalid or expired OTP');
     }
+
+    user.registrationState = 'completed';
+    user.otp = undefined;
+    user.otpExpires = undefined;
+    await user.save();
+
+    return user;
   }
 }
