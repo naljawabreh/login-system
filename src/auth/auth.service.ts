@@ -22,7 +22,7 @@ export class AuthService {
     await this.usersService.generateOtp(user);
 
     const accessToken = this.jwtService.sign(
-      { id: user._id, registrationState: user.registrationState },
+      { id: user._id, username: user.username, registrationState: user.registrationState },
       { expiresIn: '1d' },
     );
 
@@ -44,13 +44,8 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    if (user.registrationState === 'pending') {
-      await this.usersService.generateOtp(user);
-      return { message: 'OTP resent. Please verify your registration.' };
-    }
-
     const accessToken = this.jwtService.sign(
-      { id: user._id, registrationState: user.registrationState },
+      { id: user._id, username: user.username, registrationState: user.registrationState },
       { expiresIn: '1d' },
     );
 
@@ -61,6 +56,19 @@ export class AuthService {
 
     user.refreshToken = refreshToken;
     await user.save();
+
+    if (user.registrationState === 'pending') {
+      await this.usersService.generateOtp(user);
+      return {
+        accessToken,
+        refreshToken,
+        user: {
+          email: user.email,
+          username: user.username,
+          otp: user.otp
+        },
+      };
+    }
 
     return { accessToken, refreshToken };
   }
@@ -81,7 +89,7 @@ export class AuthService {
       }
 
       const newAccessToken = this.jwtService.sign(
-        { id: user._id, registrationState: user.registrationState },
+        { id: user._id, username: user.username, registrationState: user.registrationState },
         { expiresIn: '1d' },
       );
 
