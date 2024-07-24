@@ -37,25 +37,45 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
+  async validateUser(loginDto: LoginDto): Promise<UserDocument | null> {
+    this.logger.log(`Validating user with identifier: ${loginDto.identifier}`);
+    const user = await this.usersService.findOneByEmailOrPhoneNumber(loginDto.identifier);
+    if (user) {
+      const isMatch = await user.comparePassword(loginDto.password);
+      if (isMatch) {
+        this.logger.log(`Password matched for user: ${user.email}`);
+        return user;
+      } else {
+        this.logger.warn(`Password mismatch for user: ${user.email}`);
+      }
+    } else {
+      this.logger.warn(`User not found with identifier: ${loginDto.identifier}`);
+    }
+    return null;
+  }
+
   async login(loginDto: LoginDto): Promise<any> {
-    const { email, password } = loginDto;  
-    const user = await this.usersService.findOneByEmail(email);
-    if (!user || !(await user.comparePassword(password))) {
+    this.logger.log(`Attempting login for identifier: ${loginDto.identifier}`);
+    const user = await this.validateUser(loginDto);
+    if (!user) {
+      this.logger.warn(`Invalid credentials for identifier: ${loginDto.identifier}`);
       throw new UnauthorizedException('Invalid credentials');
     }
 
     const accessToken = this.jwtService.sign(
       { id: user._id, username: user.username, registrationState: user.registrationState },
-      { expiresIn: '1d' },
+      { expiresIn: this.configService.get<string | number>('JWT_EXPIRES') },
     );
 
     const refreshToken = this.jwtService.sign(
-      { id: user._id },
-      { expiresIn: '7d' },
+      { id: user._id, registrationState: user.registrationState },
+      { expiresIn: this.configService.get<string | number>('JWT_REFRESH_EXPIRES') },
     );
 
     user.refreshToken = refreshToken;
     await user.save();
+
+    this.logger.log(`User logged in: ${user.email}`);
 
     if (user.registrationState === 'pending') {
       await this.usersService.generateOtp(user);
@@ -65,12 +85,21 @@ export class AuthService {
         user: {
           email: user.email,
           username: user.username,
+          registrationState: user.registrationState,
           otp: user.otp
         },
       };
     }
 
-    return { accessToken, refreshToken };
+    return {
+      accessToken,
+      refreshToken,
+      user: {
+        email: user.email,
+        username: user.username,
+        registrationState: user.registrationState,
+      },
+    };
   }
 
   async verifyOtp(userId: string, otp: string): Promise<UserDocument> {
@@ -85,7 +114,7 @@ export class AuthService {
 
       const user = await this.usersService.findOneById(payload.id);
       if (!user || user.refreshToken !== oldRefreshToken) {
-        throw new UnauthorizedException();
+        throw new UnauthorizedException('Invalid refresh token');
       }
 
       const newAccessToken = this.jwtService.sign(

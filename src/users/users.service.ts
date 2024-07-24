@@ -12,6 +12,13 @@ export class UsersService {
     return this.userModel.findOne({ email }).exec();
   }
 
+  async findOneByEmailOrPhoneNumber(identifier: string): Promise<UserDocument> {
+    console.log(`Finding user with identifier: ${identifier}`);
+    return this.userModel.findOne({
+      $or: [{ email: identifier }, { phoneNumber: identifier }],
+    });
+  }
+
   async findOneById(id: string): Promise<UserDocument | undefined> {
     const user = await this.userModel.findById(id).exec();
     if (!user) {
