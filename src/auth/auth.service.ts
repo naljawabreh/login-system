@@ -4,6 +4,7 @@ import { UsersService } from '../users/users.service';
 import { ConfigService } from '@nestjs/config';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { BaseUserDto, LoginResponseDto, PendingUserDto, registrationResponseDto } from './dto/user.dto';
 import { UserDocument } from '../users/schemas/user.schema';
 
 @Injectable()
@@ -16,9 +17,9 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
-  async register(registerDto: RegisterDto): Promise<any> {
-    const { username, email, password, firstName, lastName, phoneNumber, birthdate, language, photo } = registerDto;
-    const user = await this.usersService.create(username, email, password, firstName, lastName, phoneNumber, birthdate, language, photo);
+  async register(registerDto: RegisterDto): Promise<registrationResponseDto> {
+    const { username, email, password, firstName, lastName, phoneNumber, birthdate, language, photoURL } = registerDto;
+    const user = await this.usersService.create(username, email, password, firstName, lastName, phoneNumber, birthdate, language, photoURL);
     await this.usersService.generateOtp(user);
 
     const accessToken = this.jwtService.sign(
@@ -54,51 +55,54 @@ export class AuthService {
     return null;
   }
 
-  async login(loginDto: LoginDto): Promise<any> {
+  async login(loginDto: LoginDto): Promise<LoginResponseDto> {
     this.logger.log(`Attempting login for identifier: ${loginDto.identifier}`);
     const user = await this.validateUser(loginDto);
     if (!user) {
       this.logger.warn(`Invalid credentials for identifier: ${loginDto.identifier}`);
       throw new UnauthorizedException('Invalid credentials');
     }
-
+  
     const accessToken = this.jwtService.sign(
       { id: user._id, username: user.username, registrationState: user.registrationState },
       { expiresIn: this.configService.get<string | number>('JWT_EXPIRES') },
     );
-
+  
     const refreshToken = this.jwtService.sign(
       { id: user._id, registrationState: user.registrationState },
       { expiresIn: this.configService.get<string | number>('JWT_REFRESH_EXPIRES') },
     );
-
+  
     user.refreshToken = refreshToken;
     await user.save();
-
+  
     this.logger.log(`User logged in: ${user.email}`);
-
+  
     if (user.registrationState === 'pending') {
       await this.usersService.generateOtp(user);
-      return {
-        accessToken,
-        refreshToken,
-        user: {
-          email: user.email,
-          username: user.username,
-          registrationState: user.registrationState,
-          otp: user.otp
-        },
-      };
-    }
-
-    return {
-      accessToken,
-      refreshToken,
-      user: {
+      const pendingUser: PendingUserDto = {
         email: user.email,
         username: user.username,
         registrationState: user.registrationState,
-      },
+        otp: user.otp,
+      };
+      return {
+        accessToken,
+        refreshToken,
+        user: pendingUser,
+      };
+    }
+  
+    const baseUser: BaseUserDto = {
+      email: user.email,
+      username: user.username,
+      registrationState: user.registrationState,
+    };
+  
+    return {
+      accessToken,
+      refreshToken,
+      user: baseUser,
     };
   }
 

@@ -11,5 +11,5 @@ export interface User extends Document {
   birthdate: Date;
   registrationDate: Date;
   language?: string;
-  photo?: string;
+  photoURL?: string;
 }

@@ -2,6 +2,7 @@ import { Injectable, ExecutionContext, Logger, UnauthorizedException } from '@ne
 import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
+// can be a middlware for ease of use in multiple links scenario
 export class JwtAuthGuard extends AuthGuard('jwt') {
     private readonly logger = new Logger(JwtAuthGuard.name);
 

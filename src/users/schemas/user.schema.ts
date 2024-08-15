@@ -16,7 +16,7 @@ export class User {
 
   @Prop({ required: true })
   password: string;
-
+// create enum for the var
   @Prop({ required: true, enum: ['pending', 'completed'], default: 'pending' })
   registrationState: string;
 
@@ -47,7 +47,7 @@ export class User {
   language: string;
 
   @Prop({ required: false })
-  photo: string;
+  photoURL: string;
 
   @Prop()
   refreshToken: string;

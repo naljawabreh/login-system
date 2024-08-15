@@ -6,3 +6,6 @@ Shell codes:
     npm install bcrypt
     npm install --save-dev @types/bcrypt
     npm install @nestjs/config
+
+
+# lenter for any and imports in eslintrc

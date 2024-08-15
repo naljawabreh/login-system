@@ -43,9 +43,9 @@ export class RegisterDto {
     @IsOptional()
     readonly language?: string;
     
-    @ApiProperty({ example: 'http://example.com/photo.jpg', description: 'The photo URL of the user' })
+    @ApiProperty({ example: 'http://example.com/photo.jpg', description: 'The photoURL URL of the user' })
     @IsString()
     @IsOptional()
-    readonly photo?: string;
+    readonly photoURL?: string;
   }
   

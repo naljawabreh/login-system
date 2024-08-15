@@ -27,8 +27,8 @@ export class UsersService {
     return user;
   }
 
-  async create(username: string, email: string, password: string, firstName: string, lastName: string, phoneNumber: string, birthdate: Date, language?: string, photo?: string): Promise<UserDocument> {
-    const user = new this.userModel({ username, email, password, firstName, lastName, phoneNumber, birthdate, language, photo });
+  async create(username: string, email: string, password: string, firstName: string, lastName: string, phoneNumber: string, birthdate: Date, language?: string, photoURL?: string): Promise<UserDocument> {
+    const user = new this.userModel({ username, email, password, firstName, lastName, phoneNumber, birthdate, language, photoURL });
     return user.save();
   }
 

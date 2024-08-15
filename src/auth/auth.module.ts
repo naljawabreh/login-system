@@ -11,6 +11,7 @@ import { UserSchema } from '../users/schemas/user.schema';
 
 @Module({
   imports: [
+    // create a seperate module for env vars
     UsersModule,
     PassportModule,
     JwtModule.registerAsync({
