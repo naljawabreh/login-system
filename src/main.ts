@@ -6,7 +6,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
   const config = new DocumentBuilder()
-    .setTitle('Costt login system API')
+    .setTitle('Rawabi login system API')
     .setDescription('API documentation for regestration and login with JWT passport')
     .setVersion('1.0')
     .addTag('login')
