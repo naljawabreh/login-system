@@ -8,7 +8,7 @@ export type UserDocument = User & Document & {
 
 @Schema()
 export class User {
-  @Prop({ required: true, unique: true })
+  @Prop({ required: false, unique: true })
   username: string;
 
   @Prop({ required: true, unique: true })
@@ -51,6 +51,9 @@ export class User {
 
   @Prop()
   refreshToken: string;
+  
+  @Prop()
+  isResident: boolean;
 }
 
 const UserSchema = SchemaFactory.createForClass(User);

@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, BadRequestException, Logger } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { ConfigService } from '@nestjs/config';
@@ -18,8 +18,8 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto): Promise<registrationResponseDto> {
-    const { username, email, password, firstName, lastName, phoneNumber, birthdate, language, photoURL } = registerDto;
-    const user = await this.usersService.create(username, email, password, firstName, lastName, phoneNumber, birthdate, language, photoURL);
+    const { email, password, firstName, lastName, phoneNumber, isResident, username, birthdate, language, photoURL } = registerDto;
+    const user = await this.usersService.create(email, password, firstName, lastName, phoneNumber, isResident, username, birthdate, language, photoURL);
     await this.usersService.generateOtp(user);
 
     const accessToken = this.jwtService.sign(
@@ -85,6 +85,7 @@ export class AuthService {
         username: user.username,
         registrationState: user.registrationState,
         otp: user.otp,
+        isResident: ''
       };
       return {
         accessToken,
@@ -97,6 +98,7 @@ export class AuthService {
       email: user.email,
       username: user.username,
       registrationState: user.registrationState,
+      isResident: ''
     };
   
     return {

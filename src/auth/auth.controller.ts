@@ -1,9 +1,8 @@
-import { Controller, Post, Body, UseGuards, Get, Request, Logger, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Request, Logger } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { UserDocument } from 'src/users/schemas/user.schema';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { ApiTags, ApiBearerAuth, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { registrationResponseDto } from './dto/user.dto';

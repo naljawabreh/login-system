@@ -1,11 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {IsEmail, IsNotEmpty, IsString, MinLength, IsDate, IsOptional} from 'class-validator';
+import {IsEmail, IsNotEmpty, IsString, MinLength, IsDate, IsOptional, IsBoolean} from 'class-validator';
 
 export class RegisterDto {
     @ApiProperty({ example: 'judoChan', description: 'The username of the user' })
     @IsString()
     @IsNotEmpty()
-    readonly username: string;
+    @IsOptional()
+    readonly username?: string;
 
     @ApiProperty({ example: 'john.doe@example.com', description: 'The email of the user' })
     @IsNotEmpty()
@@ -36,7 +37,8 @@ export class RegisterDto {
     @ApiProperty({ example: '1990-01-01', description: 'The birthdate of the user' })
     @IsDate()
     @IsNotEmpty()
-    readonly birthdate: Date;
+    @IsOptional()
+    readonly birthdate?: Date;
     
     @ApiProperty({ example: 'en', description: 'The preferred language of the user' })
     @IsString()
@@ -47,5 +49,9 @@ export class RegisterDto {
     @IsString()
     @IsOptional()
     readonly photoURL?: string;
+    
+    @ApiProperty({ example: true, description: 'Indicates if the user is a resident' })
+    @IsBoolean()
+    readonly isResident: boolean;
   }
   
