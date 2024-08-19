@@ -98,6 +98,16 @@ export class AuthService {
     return this.usersService.verifyOtp(userId, otp);
   }
 
+  async findByEmailSendOTP(userMail: string): Promise<void> {
+    const user = await this.usersService.findOneByEmail(userMail);
+    await this.usersService.generateOtp(user);
+  }
+
+  async findEmailValidateOTP(userMail: string, otp: string): Promise<UserDocument> {
+    const user = await this.usersService.findOneByEmail(userMail);
+    return this.verifyOtp(user.id, otp);
+  }
+
   async logout(user: UserDocument) {
     await this.usersService.invalidateTokensForUser(user.id);
   }

@@ -71,4 +71,33 @@ export class AuthController {
     this.logger.log(`User logged out: ${user.id}`);
     return { message: 'Successfully logged out' };
   }
+
+  @Post('/forgot-password')
+  @ApiOperation({ summary: 'Initiate forgot password process' })
+  @ApiResponse({ status: 200, description: "OTP sent to the user’s email" })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  async forgotPassword(@Body('email') email: string) {
+    await this.authService.findByEmailSendOTP(email);
+    return { message: 'OTP sent to your email' };
+  }
+  
+  @Post('/reset-password')
+  @ApiOperation({ summary: 'Reset password using OTP' })
+  @ApiResponse({ status: 200, description: 'Password successfully reset' })
+  @ApiResponse({ status: 400, description: 'Invalid OTP or OTP expired' })
+  async resetPassword(
+    @Body('email') email: string,
+    @Body('otp') otp: string,
+    @Body('newPassword') newPassword: string
+  ) {
+    const user = await this.authService.findEmailValidateOTP(email, otp);
+
+    // Update the user's password
+    user.password = newPassword;
+    user.otp = undefined;
+    await user.save();
+
+    return { message: 'Password successfully reset' };
+  }
+
 }
