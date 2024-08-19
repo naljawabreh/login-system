@@ -27,15 +27,9 @@ export class AuthService {
       { expiresIn: '1d' },
     );
 
-    const refreshToken = this.jwtService.sign(
-      { id: user._id },
-      { expiresIn: '7d' },
-    );
-
-    user.refreshToken = refreshToken;
     await user.save();
 
-    return { accessToken, refreshToken };
+    return { accessToken };
   }
 
   async validateUser(loginDto: LoginDto): Promise<UserDocument | null> {
@@ -68,12 +62,6 @@ export class AuthService {
       { expiresIn: this.configService.get<string | number>('JWT_EXPIRES') },
     );
   
-    const refreshToken = this.jwtService.sign(
-      { id: user._id, registrationState: user.registrationState },
-      { expiresIn: this.configService.get<string | number>('JWT_REFRESH_EXPIRES') },
-    );
-  
-    user.refreshToken = refreshToken;
     await user.save();
   
     this.logger.log(`User logged in: ${user.email}`);
@@ -89,7 +77,6 @@ export class AuthService {
       };
       return {
         accessToken,
-        refreshToken,
         user: pendingUser,
       };
     }
@@ -103,35 +90,12 @@ export class AuthService {
   
     return {
       accessToken,
-      refreshToken,
       user: baseUser,
     };
   }
 
   async verifyOtp(userId: string, otp: string): Promise<UserDocument> {
     return this.usersService.verifyOtp(userId, otp);
-  }
-
-  async refreshToken(oldRefreshToken: string): Promise<string> {
-    try {
-      const payload = this.jwtService.verify(oldRefreshToken, {
-        secret: this.configService.get<string>('JWT_SECRET'),
-      });
-
-      const user = await this.usersService.findOneById(payload.id);
-      if (!user || user.refreshToken !== oldRefreshToken) {
-        throw new UnauthorizedException('Invalid refresh token');
-      }
-
-      const newAccessToken = this.jwtService.sign(
-        { id: user._id, username: user.username, registrationState: user.registrationState },
-        { expiresIn: '1d' },
-      );
-
-      return newAccessToken;
-    } catch (err) {
-      throw new UnauthorizedException('Invalid refresh token');
-    }
   }
 
   async logout(user: UserDocument) {

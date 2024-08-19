@@ -37,7 +37,7 @@ export class User {
   @Prop({ required: true, unique: true })
   phoneNumber: string;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   birthdate: Date;
 
   @Prop({ required: true, default: Date.now })
@@ -48,9 +48,6 @@ export class User {
 
   @Prop({ required: false })
   photoURL: string;
-
-  @Prop()
-  refreshToken: string;
   
   @Prop()
   isResident: boolean;

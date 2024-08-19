@@ -55,13 +55,6 @@ export class AuthController {
     return this.authService.verifyOtp(req.user.id, verifyOtpDto.otp);
   }
 
-  @Post('refresh-token')
-  @ApiOperation({ summary: 'Refresh access token using refresh token' })
-  @ApiResponse({ status: 200, description: 'Token successfully refreshed' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async refreshToken(@Body('refreshToken') refreshToken: string) {
-    return { accessToken: await this.authService.refreshToken(refreshToken) };
-  }
 
   @Post('/logout')
   @ApiOperation({ summary: 'Logout a user' })

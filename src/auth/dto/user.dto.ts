@@ -25,18 +25,12 @@ export class BaseUserDto {
     @IsNotEmpty()
     @IsString()
     accessToken: string;
-    @IsNotEmpty()
-    @IsString()
-    refreshToken: string;
   }
   
   export class LoginResponseDto {
     @IsNotEmpty()
     @IsString()
     accessToken: string;
-    @IsNotEmpty()
-    @IsString()
-    refreshToken: string;
     @IsNotEmpty()
     @IsEnum([BaseUserDto , PendingUserDto], {message: "valid usertype required"})
     user: BaseUserDto | PendingUserDto;
