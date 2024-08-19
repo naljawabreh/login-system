@@ -28,6 +28,11 @@ export class UsersService {
   }
 
   async create(email: string, password: string, firstName: string, lastName: string, phoneNumber: string, isResident:boolean, username?: string, birthdate?: Date, language?: string, photoURL?: string): Promise<UserDocument> {
+    if (!username) {
+      username = `${firstName}${lastName}`.toLowerCase();
+    } else {
+      username = username.toLowerCase();
+    }
     const user = new this.userModel({ email, password, firstName, lastName, phoneNumber, isResident, username, birthdate, language, photoURL });
     return user.save();
   }
@@ -71,6 +76,5 @@ export class UsersService {
     user.otp = undefined;
     user.otpExpires = undefined;
     await user.save();
-  }
-  
+  } 
 }
