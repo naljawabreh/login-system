@@ -4,6 +4,8 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { ForgotPasswordDto } from './dto/forgot-pass.dto';
+import { ResetPasswordDto } from './dto/reset-pass.dto';
 import { ApiTags, ApiBearerAuth, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { registrationResponseDto } from './dto/user.dto';
 
@@ -76,8 +78,8 @@ export class AuthController {
   @ApiOperation({ summary: 'Initiate forgot password process' })
   @ApiResponse({ status: 200, description: "OTP sent to the user’s email" })
   @ApiResponse({ status: 404, description: 'User not found' })
-  async forgotPassword(@Body('email') email: string) {
-    await this.authService.findByEmailSendOTP(email);
+  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
+    await this.authService.findByEmailSendOTP(forgotPasswordDto.email);
     return { message: 'OTP sent to your email' };
   }
   
@@ -85,15 +87,11 @@ export class AuthController {
   @ApiOperation({ summary: 'Reset password using OTP' })
   @ApiResponse({ status: 200, description: 'Password successfully reset' })
   @ApiResponse({ status: 400, description: 'Invalid OTP or OTP expired' })
-  async resetPassword(
-    @Body('email') email: string,
-    @Body('otp') otp: string,
-    @Body('newPassword') newPassword: string
-  ) {
-    const user = await this.authService.findEmailValidateOTP(email, otp);
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    const user = await this.authService.findEmailValidateOTP(resetPasswordDto.email, resetPasswordDto.otp);
 
     // Update the user's password
-    user.password = newPassword;
+    user.password = resetPasswordDto.newPassword;
     user.otp = undefined;
     await user.save();
 
