@@ -62,4 +62,20 @@ export class AuthController {
   async refreshToken(@Body('refreshToken') refreshToken: string) {
     return { accessToken: await this.authService.refreshToken(refreshToken) };
   }
+
+  @Post('/logout')
+  @ApiOperation({ summary: 'Logout a user' })
+  @ApiResponse({ status: 200, description: 'User successfully logged out' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async logout(@Request() req) {
+    this.logger.log('Logout endpoint hit received...');
+    const user = req.user;
+  
+    await this.authService.logout(user);
+  
+    this.logger.log(`User logged out: ${user.id}`);
+    return { message: 'Successfully logged out' };
+  }
 }

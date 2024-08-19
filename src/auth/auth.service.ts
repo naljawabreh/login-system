@@ -133,4 +133,9 @@ export class AuthService {
       throw new UnauthorizedException('Invalid refresh token');
     }
   }
+
+  async logout(user: UserDocument) {
+    await this.usersService.invalidateTokensForUser(user.id);
+  }
+
 }
