@@ -73,7 +73,7 @@ export class AuthService {
         username: user.username,
         registrationState: user.registrationState,
         otp: user.otp,
-        isResident: ''
+        isResident: user.isResident
       };
       return {
         accessToken,
@@ -85,7 +85,7 @@ export class AuthService {
       email: user.email,
       username: user.username,
       registrationState: user.registrationState,
-      isResident: ''
+      isResident: user.isResident
     };
   
     return {

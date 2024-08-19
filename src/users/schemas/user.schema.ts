@@ -49,7 +49,7 @@ export class User {
   @Prop({ required: false })
   photoURL: string;
   
-  @Prop()
+  @Prop({ required: true, default: false })
   isResident: boolean;
 }
 

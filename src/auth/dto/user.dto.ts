@@ -1,4 +1,4 @@
-import {IsEmail, IsNotEmpty, IsString, IsEnum} from 'class-validator';
+import {IsEmail, IsNotEmpty, IsString, IsEnum, IsBoolean} from 'class-validator';
 
 export class BaseUserDto {
     @IsNotEmpty()
@@ -11,8 +11,8 @@ export class BaseUserDto {
     @IsString()
     registrationState: string;
     @IsNotEmpty()
-    @IsString()
-    isResident: string;
+    @IsBoolean()
+    isResident: boolean;
   }
   
   export class PendingUserDto extends BaseUserDto {
