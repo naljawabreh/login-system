@@ -52,7 +52,7 @@ export class UsersService {
     await user.save();
 
     // email/SMS service integration for OTP
-    console.log(`OTP for user ${user.firstName} is ${otp}`);
+    console.log(`OTP for user ${user.firstName} ${user.lastName} is ${otp}`);
   }
 
   async verifyOtp(userId: string, otp: string): Promise<UserDocument> {
