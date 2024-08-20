@@ -6,9 +6,6 @@ export class BaseUserDto {
     email: string;
     @IsNotEmpty()
     @IsString()
-    username: string;
-    @IsNotEmpty()
-    @IsString()
     registrationState: string;
     @IsNotEmpty()
     @IsBoolean()

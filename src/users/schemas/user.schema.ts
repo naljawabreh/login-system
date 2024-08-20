@@ -8,15 +8,13 @@ export type UserDocument = User & Document & {
 
 @Schema()
 export class User {
-  @Prop({ required: false, unique: true })
-  username: string;
-
   @Prop({ required: true, unique: true })
   email: string;
 
   @Prop({ required: true })
   password: string;
-// create enum for the var
+  
+  // create enum for the var
   @Prop({ required: true, enum: ['pending', 'completed'], default: 'pending' })
   registrationState: string;
 
@@ -36,9 +34,6 @@ export class User {
 
   @Prop({ required: true, unique: true })
   phoneNumber: string;
-
-  @Prop({ required: false })
-  birthdate: Date;
 
   @Prop({ required: true, default: Date.now })
   registrationDate: Date;

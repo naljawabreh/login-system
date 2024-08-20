@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
@@ -27,13 +27,19 @@ export class UsersService {
     return user;
   }
 
-  async create(email: string, password: string, firstName: string, lastName: string, phoneNumber: string, isResident:boolean, username?: string, birthdate?: Date, language?: string, photoURL?: string): Promise<UserDocument> {
-    if (!username) {
-      username = `${firstName}${lastName}`.toLowerCase();
-    } else {
-      username = username.toLowerCase();
+  async create(email: string, password: string, firstName: string, lastName: string, phoneNumber: string, isResident:boolean, language?: string, photoURL?: string): Promise<UserDocument> {
+    // Check if the email is already in use
+    const existingUserByEmail = await this.userModel.findOne({ email });
+    if (existingUserByEmail) {
+      throw new BadRequestException('Email is already registered.');
     }
-    const user = new this.userModel({ email, password, firstName, lastName, phoneNumber, isResident, username, birthdate, language, photoURL });
+
+    // Check if the phone number is already in use
+    const existingUserByPhoneNumber = await this.userModel.findOne({ phoneNumber });
+    if (existingUserByPhoneNumber) {
+      throw new BadRequestException('Phone number is already registered.');
+    }
+    const user = new this.userModel({ email, password, firstName, lastName, phoneNumber, isResident, language, photoURL });
     return user.save();
   }
 
@@ -46,7 +52,7 @@ export class UsersService {
     await user.save();
 
     // email/SMS service integration for OTP
-    console.log(`OTP for user ${user.username} is ${otp}`);
+    console.log(`OTP for user ${user.firstName} is ${otp}`);
   }
 
   async verifyOtp(userId: string, otp: string): Promise<UserDocument> {

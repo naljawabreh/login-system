@@ -18,12 +18,12 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto): Promise<registrationResponseDto> {
-    const { email, password, firstName, lastName, phoneNumber, isResident, username, birthdate, language, photoURL } = registerDto;
-    const user = await this.usersService.create(email, password, firstName, lastName, phoneNumber, isResident, username, birthdate, language, photoURL);
+    const { email, password, firstName, lastName, phoneNumber, isResident, language, photoURL } = registerDto;
+    const user = await this.usersService.create(email, password, firstName, lastName, phoneNumber, isResident, language, photoURL);
     await this.usersService.generateOtp(user);
 
     const accessToken = this.jwtService.sign(
-      { id: user._id, username: user.username, registrationState: user.registrationState },
+      { id: user._id, userName: user.firstName, registrationState: user.registrationState },
       { expiresIn: '1d' },
     );
 
@@ -58,7 +58,7 @@ export class AuthService {
     }
   
     const accessToken = this.jwtService.sign(
-      { id: user._id, username: user.username, registrationState: user.registrationState },
+      { id: user._id, userName: user.firstName, registrationState: user.registrationState },
       { expiresIn: this.configService.get<string | number>('JWT_EXPIRES') },
     );
   
@@ -70,7 +70,6 @@ export class AuthService {
       await this.usersService.generateOtp(user);
       const pendingUser: PendingUserDto = {
         email: user.email,
-        username: user.username,
         registrationState: user.registrationState,
         otp: user.otp,
         isResident: user.isResident
@@ -83,7 +82,6 @@ export class AuthService {
   
     const baseUser: BaseUserDto = {
       email: user.email,
-      username: user.username,
       registrationState: user.registrationState,
       isResident: user.isResident
     };
