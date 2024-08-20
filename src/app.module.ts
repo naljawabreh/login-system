@@ -9,13 +9,15 @@ import { IsPhoneNumberUniqueConstraint } from './auth/validators/is-phone-number
 
 
 @Module({
+  providers: [
+    IsEmailUniqueConstraint, 
+    IsPhoneNumberUniqueConstraint
+  ],
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRoot(process.env.MONGO_URI),
     AuthModule,
     UsersModule,
-    IsEmailUniqueConstraint,
-    IsPhoneNumberUniqueConstraint,
   ],
 })
 export class AppModule {}
