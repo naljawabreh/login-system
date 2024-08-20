@@ -4,8 +4,6 @@ import { ConfigModule } from '@nestjs/config';
 // import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { IsEmailUniqueConstraint } from './auth/validators/is-email-unique.validator';
-import { IsPhoneNumberUniqueConstraint } from './auth/validators/is-phone-number-unique.validator';
 
 
 @Module({
@@ -14,10 +12,6 @@ import { IsPhoneNumberUniqueConstraint } from './auth/validators/is-phone-number
     MongooseModule.forRoot(process.env.MONGO_URI),
     AuthModule,
     UsersModule,
-  ],
-  providers: [
-    IsEmailUniqueConstraint, 
-    IsPhoneNumberUniqueConstraint,
   ],
 })
 export class AppModule {}

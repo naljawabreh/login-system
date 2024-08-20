@@ -8,8 +8,6 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from '../users/schemas/user.schema';
-import { IsEmailUniqueConstraint } from './validators/is-email-unique.validator';
-import { IsPhoneNumberUniqueConstraint } from './validators/is-phone-number-unique.validator';
 
 @Module({
   imports: [
@@ -28,7 +26,7 @@ import { IsPhoneNumberUniqueConstraint } from './validators/is-phone-number-uniq
     }),
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema}]),
   ],
-  providers: [AuthService, JwtStrategy, IsEmailUniqueConstraint, IsPhoneNumberUniqueConstraint],
+  providers: [AuthService, JwtStrategy],
   controllers: [AuthController],
 })
 export class AuthModule {}
