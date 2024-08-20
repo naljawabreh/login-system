@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { IsEmailUniqueConstraint } from './auth/validators/is-email-unique.validator';
 import { IsPhoneNumberUniqueConstraint } from './auth/validators/is-phone-number-unique.validator';
+import { UsersService } from './users/users.service';
 
 
 @Module({
@@ -17,7 +18,8 @@ import { IsPhoneNumberUniqueConstraint } from './auth/validators/is-phone-number
   ],
   providers: [
     IsEmailUniqueConstraint, 
-    IsPhoneNumberUniqueConstraint
+    IsPhoneNumberUniqueConstraint,
+    UsersService,
   ],
 })
 export class AppModule {}
