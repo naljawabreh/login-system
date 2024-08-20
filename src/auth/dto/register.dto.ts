@@ -35,12 +35,7 @@ export class RegisterDto {
     @IsString()
     @IsOptional()
     readonly language?: string;
-    
-    @ApiProperty({ example: 'http://example.com/photo.jpg', description: 'The photoURL URL of the user' })
-    @IsString()
-    @IsOptional()
-    readonly photoURL?: string;
-    
+
     @ApiProperty({ example: true, description: 'Indicates if the user is a resident' })
     @IsBoolean()
     readonly isResident: boolean;
