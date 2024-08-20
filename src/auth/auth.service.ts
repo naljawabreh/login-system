@@ -4,7 +4,7 @@ import { UsersService } from '../users/users.service';
 import { ConfigService } from '@nestjs/config';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { BaseUserDto, LoginResponseDto, PendingUserDto, registrationResponseDto } from './dto/user.dto';
+import { BaseUserDto, FullUserDto, LoginResponseDto, registrationResponseDto } from './dto/user.dto';
 import { UserDocument } from '../users/schemas/user.schema';
 
 @Injectable()
@@ -68,27 +68,38 @@ export class AuthService {
   
     if (user.registrationState === 'pending') {
       await this.usersService.generateOtp(user);
-      const pendingUser: PendingUserDto = {
+      const fullUser: FullUserDto = {
+        id: user.id,
         email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        phoneNumber: user.phoneNumber,
+        isResident: user.isResident,
+        language: user.language,
+        photoURL: user.photoURL,
         registrationState: user.registrationState,
-        otp: user.otp,
-        isResident: user.isResident
       };
       return {
         accessToken,
-        user: pendingUser,
+        user: fullUser,
       };
     }
   
-    const baseUser: BaseUserDto = {
+    const fullUser: FullUserDto = {
+      id: user.id,
       email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phoneNumber: user.phoneNumber,
+      isResident: user.isResident,
+      language: user.language,
+      photoURL: user.photoURL,
       registrationState: user.registrationState,
-      isResident: user.isResident
     };
   
     return {
       accessToken,
-      user: baseUser,
+      user: fullUser,
     };
   }
 

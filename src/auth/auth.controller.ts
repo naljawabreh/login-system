@@ -6,7 +6,7 @@ import { LoginDto } from './dto/login.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { ForgotPasswordDto } from './dto/forgot-pass.dto';
 import { ResetPasswordDto } from './dto/reset-pass.dto';
-import { ApiTags, ApiBearerAuth, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiResponse, ApiOperation, ApiHeader } from '@nestjs/swagger';
 import { registrationResponseDto } from './dto/user.dto';
 
 @ApiTags('login')
@@ -18,9 +18,15 @@ export class AuthController {
 
   @Post('/register')
   @ApiOperation({ summary: 'Register a new user' })
+  @ApiHeader({
+    name: 'language',
+    description: 'Language of the user (e.g., en, ar)',
+    required: false,
+  })
   @ApiResponse({ status: 201, description: 'User successfully registered' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
-  async register(@Body() registerDto: RegisterDto): Promise<registrationResponseDto> {
+  async register(@Body() registerDto: RegisterDto, language: string): Promise<registrationResponseDto> {
+    this.logger.log(`Registration attempt with language: ${language}`);
     return this.authService.register(registerDto);
   }
 
@@ -56,7 +62,6 @@ export class AuthController {
   async verifyOtp(@Request() req, @Body() verifyOtpDto: VerifyOtpDto) {
     return this.authService.verifyOtp(req.user.id, verifyOtpDto.otp);
   }
-
 
   @Post('/logout')
   @ApiOperation({ summary: 'Logout a user' })

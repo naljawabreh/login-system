@@ -11,13 +11,18 @@ export class BaseUserDto {
     @IsBoolean()
     isResident: boolean;
   }
-  
-  export class PendingUserDto extends BaseUserDto {
-    @IsNotEmpty()
-    @IsString()
-    otp: string;
+  export class FullUserDto {
+    readonly id: string;
+    readonly email: string;
+    readonly firstName: string;
+    readonly lastName: string;
+    readonly phoneNumber: string;
+    readonly isResident: boolean;
+    readonly language?: string;
+    readonly photoURL?: string;
+    readonly registrationState: string;
+    // Add any other fields you want to include
   }
-  
   export class registrationResponseDto {
     @IsNotEmpty()
     @IsString()
@@ -29,6 +34,6 @@ export class BaseUserDto {
     @IsString()
     accessToken: string;
     @IsNotEmpty()
-    @IsEnum([BaseUserDto , PendingUserDto], {message: "valid usertype required"})
-    user: BaseUserDto | PendingUserDto;
+    @IsEnum([BaseUserDto], {message: "valid usertype required"})
+    user: BaseUserDto;
   }
