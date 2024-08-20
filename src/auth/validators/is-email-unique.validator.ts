@@ -8,8 +8,9 @@ export class IsEmailUniqueConstraint implements ValidatorConstraintInterface {
   constructor(private readonly usersService: UsersService) {}
 
   async validate(email: string, args: ValidationArguments): Promise<boolean> {
+    console.log(email, this.usersService);
     const user = await this.usersService.findOneByEmail(email);
-    return !user; // Return true if email is not found (i.e., unique)
+    return !user;
   }
 
   defaultMessage(args: ValidationArguments): string {

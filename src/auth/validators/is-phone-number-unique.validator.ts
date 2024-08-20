@@ -9,7 +9,7 @@ export class IsPhoneNumberUniqueConstraint implements ValidatorConstraintInterfa
 
   async validate(phoneNumber: string, args: ValidationArguments): Promise<boolean> {
     const user = await this.usersService.findOneByPhoneNumber(phoneNumber);
-    return !user; // Return true if phone number is not found (i.e., unique)
+    return !user;
   }
 
   defaultMessage(args: ValidationArguments): string {
