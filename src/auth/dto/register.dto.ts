@@ -1,10 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {IsEmail, IsNotEmpty, IsString, MinLength, IsOptional, IsBoolean, Matches} from 'class-validator';
+import { IsEmailUnique } from '../validators/is-email-unique.validator';
+import { IsPhoneNumberUnique } from '../validators/is-phone-number-unique.validator';
 
 export class RegisterDto {
     @ApiProperty({ example: 'john.doe@example.com', description: 'The email of the user' })
     @IsNotEmpty()
     @IsEmail({}, {message: 'Please enter correct email'})
+    @IsEmailUnique({ message: 'Email is already registered.' })
     readonly email: string;
     
     @ApiProperty({ example: 'strong 8 char password', description: 'The password of the user' })
@@ -29,6 +32,7 @@ export class RegisterDto {
     @Matches(/^(0097[02]5)\d{8}$/, {
       message: 'Phone number must start with 009705 or 009725 and consist of 14 digits long.',
     })
+    @IsPhoneNumberUnique({ message: 'Phone number is already registered.' })
     phoneNumber: string;
     
     @ApiProperty({ example: 'en', description: 'The preferred language of the user' })
@@ -45,4 +49,3 @@ export class RegisterDto {
     @IsBoolean()
     readonly isResident: boolean;
   }
-  

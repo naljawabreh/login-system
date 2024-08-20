@@ -28,17 +28,6 @@ export class UsersService {
   }
 
   async create(email: string, password: string, firstName: string, lastName: string, phoneNumber: string, isResident:boolean, language?: string, photoURL?: string): Promise<UserDocument> {
-    // Check if the email is already in use
-    const existingUserByEmail = await this.userModel.findOne({ email });
-    if (existingUserByEmail) {
-      throw new BadRequestException('Email is already registered.');
-    }
-
-    // Check if the phone number is already in use
-    const existingUserByPhoneNumber = await this.userModel.findOne({ phoneNumber });
-    if (existingUserByPhoneNumber) {
-      throw new BadRequestException('Phone number is already registered.');
-    }
     const user = new this.userModel({ email, password, firstName, lastName, phoneNumber, isResident, language, photoURL });
     return user.save();
   }
