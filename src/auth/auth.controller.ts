@@ -64,6 +64,11 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'OTP successfully verified' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiBearerAuth()
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'The JWT token',
+    required: true,
+  })
   async verifyOtp(@Request() req, @Body() verifyOtpDto: VerifyOtpDto) {
     return this.authService.verifyOtp(req.user.id, verifyOtpDto.otp);
   }
