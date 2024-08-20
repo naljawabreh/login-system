@@ -30,11 +30,6 @@ export class RegisterDto {
       message: 'Phone number must start with 009705 or 009725 and consist of 14 digits long.',
     })
     phoneNumber: string;
-    
-    @ApiProperty({ example: 'en', description: 'The preferred language of the user' })
-    @IsString()
-    @IsOptional()
-    readonly language?: string;
 
     @ApiProperty({ example: true, description: 'Indicates if the user is a resident' })
     @IsBoolean()

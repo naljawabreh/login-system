@@ -18,8 +18,8 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto): Promise<registrationResponseDto> {
-    const { email, password, firstName, lastName, phoneNumber, isResident, language } = registerDto;
-    const user = await this.usersService.create(email, password, firstName, lastName, phoneNumber, isResident, language);
+    const { email, password, firstName, lastName, phoneNumber, isResident } = registerDto;
+    const user = await this.usersService.create(email, password, firstName, lastName, phoneNumber, isResident);
     await this.usersService.generateOtp(user);
 
     const accessToken = this.jwtService.sign(
