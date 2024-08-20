@@ -38,7 +38,7 @@ export class User {
   @Prop({ required: true, default: Date.now })
   registrationDate: Date;
 
-  @Prop({ required: false })
+  @Prop({ required: true, default: "en" })
   language: string;
 
   @Prop({ required: false })
