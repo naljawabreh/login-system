@@ -10,7 +10,17 @@ async function bootstrap() {
     .setDescription('API documentation for regestration and login with JWT passport')
     .setVersion('1.0')
     .addTag('login')
-    .addBearerAuth()
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JWT-auth',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('loginAPI', app, document);
