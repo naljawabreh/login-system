@@ -124,19 +124,19 @@ export class AuthController {
     return { message: 'OTP sent to your email' };
   }
   
-  // @Post('/reset-password')
-  // @ApiOperation({ summary: 'Reset password using OTP' })
-  // @ApiResponse({ status: 200, description: 'Password successfully reset' })
-  // @ApiResponse({ status: 400, description: 'Invalid OTP or OTP expired' })
-  // async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
-  //   const user = await this.authService.findEmailValidateOTP(resetPasswordDto.email, resetPasswordDto.otp);
+  @Post('/reset-password')
+  @ApiOperation({ summary: 'Reset password using OTP' })
+  @ApiResponse({ status: 200, description: 'Password successfully reset' })
+  @ApiResponse({ status: 400, description: 'Invalid OTP or OTP expired' })
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    const user = await this.authService.findUserValidateOTP(resetPasswordDto.email, resetPasswordDto.otp);
 
-  //   // Update the user's password
-  //   user.password = resetPasswordDto.newPassword;
-  //   user.otp = undefined;
-  //   await user.save();
+    // Update the user's password
+    user.password = resetPasswordDto.newPassword;
+    user.otp = undefined;
+    await user.save();
 
-  //   return { message: 'Password successfully reset' };
-  // }
+    return { message: 'Password successfully reset' };
+  }
 
 }

@@ -146,6 +146,20 @@ export class AuthService {
     return this.verifyOtp(user.id, otp);
   }
 
+  async findUserValidateOTP(userMail: string, otp: string): Promise<UserDocument> {
+    const user = await this.usersService.findOneByEmail(userMail);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    
+    if (!this.usersService.verifyOtp(userMail, otp)) {
+      throw new NotFoundException('Verification issue');
+    }
+
+   return user;
+  }
+
   async logout(user: UserDocument) {
     await this.usersService.invalidateTokensForUser(user.id);
   }
