@@ -49,7 +49,8 @@ export class AuthController {
   @ApiOperation({ summary: 'Get user profile' })
   @ApiResponse({ status: 200, description: 'User profile successfully retrieved' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth("Bearer")
+  @ApiBearerAuth('JWT-auth')
+
   getProfile(
     @Request() req,
   ) {
@@ -76,13 +77,11 @@ export class AuthController {
   @ApiOperation({ summary: 'Verify OTP for completing registration' })
   @ApiResponse({ status: 200, description: 'OTP successfully verified' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth("Bearer")
+  @ApiBearerAuth('JWT-auth')
   async verifyOtp(
     @Request() req,
     @Body() verifyOtpDto: VerifyOtpDto,
-    @Headers('Authorization') Authorization: string,
   ) {
-    this.logger.log(`Authorization Header: ${Authorization}`);
     return this.authService.verifyOtp(req.user.email, verifyOtpDto.otp);
   }
   
@@ -100,7 +99,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Logout a user' })
   @ApiResponse({ status: 200, description: 'User successfully logged out' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth("Bearer")
+  @ApiBearerAuth('JWT-auth')
   @ApiHeader({
     name: 'Authorization',
     description: 'The JWT token',
