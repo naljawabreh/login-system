@@ -59,6 +59,7 @@ export class AuthController {
     @Request() req,
     @Headers('Authorization') Authorization: string,
   ) {
+    this.logger.log(`Authorization Header: ${Authorization}`);
     this.logger.log('User profile endpoint hit received...');
     const user = req.user;
     this.logger.log(`Request user: ${JSON.stringify(req.user)}`);
@@ -83,18 +84,15 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'OTP successfully verified' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiBearerAuth()
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'The JWT token',
-    required: true,
-  })
   async verifyOtp(
     @Request() req,
     @Body() verifyOtpDto: VerifyOtpDto,
     @Headers('Authorization') Authorization: string,
-  ){
+  ) {
+    this.logger.log(`Authorization Header: ${Authorization}`);
     return this.authService.verifyOtp(req.user.email, verifyOtpDto.otp);
   }
+  
 
   @Post('regenerate-otp')
   @ApiOperation({ summary: 'Regenerate and resend OTP for user' })

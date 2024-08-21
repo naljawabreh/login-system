@@ -7,7 +7,7 @@ export class ResetPasswordDto {
   @IsNotEmpty()
   readonly email: string;
 
-  @ApiProperty({ example: '123456', description: 'The OTP sent to the user' })
+  @ApiProperty({ example: '12345', description: 'The OTP sent to the user' })
   @IsString()
   @IsNotEmpty()
   readonly otp: string;
