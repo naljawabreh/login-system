@@ -90,6 +90,7 @@ export class AuthController {
   async verifyOtp(
     @Request() req,
     @Body() verifyOtpDto: VerifyOtpDto,
+    @Headers('Authorization') Authorization: string,
   ){
     return this.authService.verifyOtp(req.user.email, verifyOtpDto.otp);
   }
