@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Logger, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { ConfigService } from '@nestjs/config';
@@ -30,6 +30,16 @@ export class AuthService {
     await user.save();
 
     return { accessToken };
+  }
+
+  async regenerateOtp(userMail: string): Promise<void> {
+    const user = await this.usersService.findOneByEmail(userMail);
+    
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    await this.usersService.generateOtp(user);
   }
 
   async validateUser(loginDto: LoginDto): Promise<UserDocument | null> {
@@ -116,5 +126,4 @@ export class AuthService {
   async logout(user: UserDocument) {
     await this.usersService.invalidateTokensForUser(user.id);
   }
-
 }

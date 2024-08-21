@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { VerifyOtpDto, RegenerateOtpDto } from './dto/verify-otp.dto';
 import { ForgotPasswordDto } from './dto/forgot-pass.dto';
 import { ResetPasswordDto } from './dto/reset-pass.dto';
 import { ApiTags, ApiBearerAuth, ApiResponse, ApiOperation, ApiHeader } from '@nestjs/swagger';
@@ -82,6 +82,14 @@ export class AuthController {
   })
   async verifyOtp(@Request() req, @Body() verifyOtpDto: VerifyOtpDto) {
     return this.authService.verifyOtp(req.user.id, verifyOtpDto.otp);
+  }
+
+  @Post('regenerate-otp')
+  @ApiOperation({ summary: 'Regenerate and resend OTP for user' })
+  @ApiResponse({ status: 200, description: 'OTP successfully regenerated and sent' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  async regenerateOtp(@Body() regenerateOtpDto: RegenerateOtpDto) {
+    return this.authService.regenerateOtp(regenerateOtpDto.email);
   }
 
   @Post('/logout')
