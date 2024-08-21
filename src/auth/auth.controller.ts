@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Get, Request, Logger, Headers } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Request, Logger, Headers, Patch } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RegisterDto } from './dto/register.dto';
@@ -8,6 +8,7 @@ import { ForgotPasswordDto } from './dto/forgot-pass.dto';
 import { ResetPasswordDto } from './dto/reset-pass.dto';
 import { ApiTags, ApiBearerAuth, ApiResponse, ApiOperation, ApiHeader } from '@nestjs/swagger';
 import { registrationResponseDto, FullUserDto} from './dto/user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @ApiTags('login')
 @Controller('auth')
@@ -137,6 +138,15 @@ export class AuthController {
     await user.save();
 
     return { message: 'Password successfully reset' };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('/edit-profile')
+  @ApiOperation({ summary: 'Edit user profile' })
+  @ApiBearerAuth()
+  async updateUser(@Request() req, @Body() updateUserDto: UpdateUserDto) {
+    const userMail = req.user.email;
+    return this.authService.updateUser(userMail, updateUserDto);
   }
 
 }

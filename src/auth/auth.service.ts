@@ -6,6 +6,7 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { BaseUserDto, FullUserDto, LoginResponseDto, registrationResponseDto } from './dto/user.dto';
 import { UserDocument } from '../users/schemas/user.schema';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -163,4 +164,35 @@ export class AuthService {
   async logout(user: UserDocument) {
     await this.usersService.invalidateTokensForUser(user.id);
   }
+
+  //
+
+  async updateUser(userMail: string, updateUserDto: UpdateUserDto) {
+    const user = await this.usersService.findOneByEmail(userMail);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Update only the fields that are passed
+    if (updateUserDto.firstName) {
+      user.firstName = updateUserDto.firstName;
+    }
+
+    if (updateUserDto.lastName) {
+      user.lastName = updateUserDto.lastName;
+    }
+
+    if (updateUserDto.phoneNumber) {
+      user.phoneNumber = updateUserDto.phoneNumber;
+    }
+
+    if (updateUserDto.isResident !== undefined) {
+      user.isResident = updateUserDto.isResident;
+    }
+
+    await user.save();
+    return user;
+  }
+  
 }
