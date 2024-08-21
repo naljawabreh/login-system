@@ -49,7 +49,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Get user profile' })
   @ApiResponse({ status: 200, description: 'User profile successfully retrieved' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth('Authorization')
+  @ApiBearerAuth('JWT-auth')
   @ApiHeader({
     name: 'Authorization',
     description: 'the JWT token',
