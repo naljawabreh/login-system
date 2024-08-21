@@ -27,7 +27,7 @@ export class AuthService {
     await this.usersService.generateOtp(user);
 
     const accessToken = this.jwtService.sign(
-      { userName: user.firstName, registrationState: user.registrationState },
+      { id: user._id, userName: user.firstName, registrationState: user.registrationState },
       { expiresIn: '1d' },
     );
 
@@ -44,9 +44,9 @@ export class AuthService {
     }
 
     await this.usersService.generateOtp(user);
-    
+
     const accessToken = this.jwtService.sign(
-      { userName: user.firstName, registrationState: user.registrationState },
+      { id: user._id, userName: user.firstName, registrationState: user.registrationState },
       { expiresIn: '1d' },
     );
 
