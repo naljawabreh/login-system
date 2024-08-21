@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Get, Request, Logger } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Request, Logger, Headers } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RegisterDto } from './dto/register.dto';
@@ -25,9 +25,13 @@ export class AuthController {
   })
   @ApiResponse({ status: 201, description: 'User successfully registered' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
-  async register(@Body() registerDto: RegisterDto, language: string): Promise<registrationResponseDto> {
+  async register(
+    @Body() registerDto: RegisterDto,
+    @Headers('language') language: string,
+  ): Promise<registrationResponseDto> {
     this.logger.log(`Registration attempt with language: ${language}`);
-    return this.authService.register(registerDto);
+    const standardizedLanguage = language ? language.toLowerCase() : 'en';
+    return this.authService.register(registerDto, standardizedLanguage);
   }
 
   @Post('/login')

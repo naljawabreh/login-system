@@ -12,5 +12,6 @@ export class VerifyOtpDto {
 export class RegenerateOtpDto {
     @ApiProperty({ example: 'user@example.com', description: 'The email of the user' })
     @IsEmail()
+    @IsNotEmpty()
     readonly email: string;
   }

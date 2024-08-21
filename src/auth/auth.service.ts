@@ -17,13 +17,17 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
-  async register(registerDto: RegisterDto): Promise<registrationResponseDto> {
-    const { email, password, firstName, lastName, phoneNumber, isResident } = registerDto;
-    const user = await this.usersService.create(email, password, firstName, lastName, phoneNumber, isResident);
+    async register(registerDto: RegisterDto, language: string): Promise<registrationResponseDto> {
+      const { email, password, firstName, lastName, phoneNumber, isResident } = registerDto;
+
+      const user = await this.usersService.create(
+        email, password, firstName, lastName, phoneNumber, isResident, language,
+      );
+    
     await this.usersService.generateOtp(user);
 
     const accessToken = this.jwtService.sign(
-      { id: user._id, userName: user.firstName, registrationState: user.registrationState },
+      { userName: user.firstName, registrationState: user.registrationState },
       { expiresIn: '1d' },
     );
 
