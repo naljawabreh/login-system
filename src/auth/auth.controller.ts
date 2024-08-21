@@ -16,6 +16,16 @@ export class AuthController {
 
   constructor(private readonly authService: AuthService) {}
 
+
+  @Post('/login')
+  @ApiOperation({ summary: 'Login a user' })
+  @ApiResponse({ status: 200, description: 'User successfully logged in' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async login(@Body() loginDto: LoginDto) {
+    this.logger.log(`Login attempt with identifier: ${loginDto.identifier}`);
+    return this.authService.login(loginDto);
+  }
+
   @Post('/register')
   @ApiOperation({ summary: 'Register a new user' })
   @ApiHeader({
@@ -34,17 +44,8 @@ export class AuthController {
     return this.authService.register(registerDto, standardizedLanguage);
   }
 
-  @Post('/login')
-  @ApiOperation({ summary: 'Login a user' })
-  @ApiResponse({ status: 200, description: 'User successfully logged in' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async login(@Body() loginDto: LoginDto) {
-    this.logger.log(`Login attempt with identifier: ${loginDto.identifier}`);
-    return this.authService.login(loginDto);
-  }
-
   @UseGuards(JwtAuthGuard)
-  @Get('profile')
+  @Get('/profile')
   @ApiOperation({ summary: 'Get user profile' })
   @ApiResponse({ status: 200, description: 'User profile successfully retrieved' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })

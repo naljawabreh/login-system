@@ -45,7 +45,7 @@ export class UsersService {
   }
 
   async generateOtp(user: UserDocument): Promise<void> {
-    const otp = crypto.randomInt(100000, 999999).toString();
+    const otp = crypto.randomInt(10000, 99999).toString();
     const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
 
     user.otp = otp;
@@ -62,7 +62,7 @@ export class UsersService {
       throw new NotFoundException(`User with ID ${userMail} not found`);
     }
     
-    const validOtp = user.otp === otp || otp === '000000';
+    const validOtp = user.otp === otp || otp === '00000';
     if (!validOtp || user.otpExpires < new Date()) {
       throw new UnauthorizedException('Invalid or expired OTP');
     }
