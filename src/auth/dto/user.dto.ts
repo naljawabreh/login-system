@@ -12,16 +12,13 @@ export class BaseUserDto {
     isResident: boolean;
   }
   export class FullUserDto {
-    readonly id: string;
     readonly email: string;
     readonly firstName: string;
     readonly lastName: string;
     readonly phoneNumber: string;
     readonly isResident: boolean;
-    readonly language?: string;
     readonly photoURL?: string;
     readonly registrationState: string;
-    // Add any other fields you want to include
   }
   export class registrationResponseDto {
     @IsNotEmpty()

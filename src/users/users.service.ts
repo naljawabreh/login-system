@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
 import * as crypto from 'crypto';
+import { FullUserDto } from 'src/auth/dto/user.dto';
 
 @Injectable()
 export class UsersService {
@@ -55,7 +56,7 @@ export class UsersService {
     console.log(`OTP for user ${user.firstName} ${user.lastName} is ${otp}`);
   }
 
-  async verifyOtp(userId: string, otp: string): Promise<UserDocument> {
+  async verifyOtp(userId: string, otp: string): Promise<FullUserDto> {
     const user = await this.findOneById(userId);
     if (!user) {
       throw new NotFoundException(`User with ID ${userId} not found`);
@@ -71,7 +72,17 @@ export class UsersService {
     user.otpExpires = undefined;
     await user.save();
     
-    return user;
+    const fullUser: FullUserDto = {
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phoneNumber: user.phoneNumber,
+      isResident: user.isResident,
+      photoURL: user.photoURL,
+      registrationState: user.registrationState,
+    };
+    
+    return fullUser;
   }
   
   async invalidateTokensForUser(userId: string): Promise<void> {

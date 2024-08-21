@@ -7,7 +7,7 @@ import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { ForgotPasswordDto } from './dto/forgot-pass.dto';
 import { ResetPasswordDto } from './dto/reset-pass.dto';
 import { ApiTags, ApiBearerAuth, ApiResponse, ApiOperation, ApiHeader } from '@nestjs/swagger';
-import { registrationResponseDto } from './dto/user.dto';
+import { registrationResponseDto, FullUserDto} from './dto/user.dto';
 
 @ApiTags('login')
 @Controller('auth')
@@ -55,7 +55,18 @@ export class AuthController {
     const user = req.user;
     this.logger.log(`Request user: ${JSON.stringify(req.user)}`);
     console.log('Authenticated user:', user);
-    return user;
+
+    const fullUser: FullUserDto = {
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phoneNumber: user.phoneNumber,
+      isResident: user.isResident,
+      photoURL: user.photoURL,
+      registrationState: user.registrationState,
+    };
+
+    return fullUser;
   }
 
   @UseGuards(JwtAuthGuard)
@@ -79,6 +90,11 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'The JWT token',
+    required: true,
+  })
   async logout(@Request() req) {
     this.logger.log('Logout endpoint hit received...');
     const user = req.user;
@@ -98,19 +114,19 @@ export class AuthController {
     return { message: 'OTP sent to your email' };
   }
   
-  @Post('/reset-password')
-  @ApiOperation({ summary: 'Reset password using OTP' })
-  @ApiResponse({ status: 200, description: 'Password successfully reset' })
-  @ApiResponse({ status: 400, description: 'Invalid OTP or OTP expired' })
-  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
-    const user = await this.authService.findEmailValidateOTP(resetPasswordDto.email, resetPasswordDto.otp);
+  // @Post('/reset-password')
+  // @ApiOperation({ summary: 'Reset password using OTP' })
+  // @ApiResponse({ status: 200, description: 'Password successfully reset' })
+  // @ApiResponse({ status: 400, description: 'Invalid OTP or OTP expired' })
+  // async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+  //   const user = await this.authService.findEmailValidateOTP(resetPasswordDto.email, resetPasswordDto.otp);
 
-    // Update the user's password
-    user.password = resetPasswordDto.newPassword;
-    user.otp = undefined;
-    await user.save();
+  //   // Update the user's password
+  //   user.password = resetPasswordDto.newPassword;
+  //   user.otp = undefined;
+  //   await user.save();
 
-    return { message: 'Password successfully reset' };
-  }
+  //   return { message: 'Password successfully reset' };
+  // }
 
 }

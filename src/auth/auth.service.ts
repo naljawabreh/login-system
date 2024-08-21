@@ -69,13 +69,11 @@ export class AuthService {
     if (user.registrationState === 'pending') {
       await this.usersService.generateOtp(user);
       const fullUser: FullUserDto = {
-        id: user.id,
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
         phoneNumber: user.phoneNumber,
         isResident: user.isResident,
-        language: user.language,
         photoURL: user.photoURL,
         registrationState: user.registrationState,
       };
@@ -86,13 +84,11 @@ export class AuthService {
     }
   
     const fullUser: FullUserDto = {
-      id: user.id,
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
       phoneNumber: user.phoneNumber,
       isResident: user.isResident,
-      language: user.language,
       photoURL: user.photoURL,
       registrationState: user.registrationState,
     };
@@ -103,7 +99,7 @@ export class AuthService {
     };
   }
 
-  async verifyOtp(userId: string, otp: string): Promise<UserDocument> {
+  async verifyOtp(userId: string, otp: string): Promise<FullUserDto> {
     return this.usersService.verifyOtp(userId, otp);
   }
 
@@ -112,7 +108,7 @@ export class AuthService {
     await this.usersService.generateOtp(user);
   }
 
-  async findEmailValidateOTP(userMail: string, otp: string): Promise<UserDocument> {
+  async findEmailValidateOTP(userMail: string, otp: string): Promise<FullUserDto> {
     const user = await this.usersService.findOneByEmail(userMail);
     return this.verifyOtp(user.id, otp);
   }
