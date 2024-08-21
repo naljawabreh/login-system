@@ -54,7 +54,10 @@ export class AuthController {
     description: 'the JWT token',
     required: true,
   })
-  getProfile(@Request() req) {
+  getProfile(
+    @Request() req,
+    @Headers('Authorization') Authorization: string,
+  ) {
     this.logger.log('User profile endpoint hit received...');
     const user = req.user;
     this.logger.log(`Request user: ${JSON.stringify(req.user)}`);
@@ -84,8 +87,11 @@ export class AuthController {
     description: 'The JWT token',
     required: true,
   })
-  async verifyOtp(@Request() req, @Body() verifyOtpDto: VerifyOtpDto) {
-    return this.authService.verifyOtp(req.user.id, verifyOtpDto.otp);
+  async verifyOtp(
+    @Request() req,
+    @Body() verifyOtpDto: VerifyOtpDto,
+  ){
+    return this.authService.verifyOtp(req.user.email, verifyOtpDto.otp);
   }
 
   @Post('regenerate-otp')

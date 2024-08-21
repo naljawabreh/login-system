@@ -113,8 +113,8 @@ export class AuthService {
     };
   }
 
-  async verifyOtp(userId: string, otp: string): Promise<FullUserDto> {
-    return this.usersService.verifyOtp(userId, otp);
+  async verifyOtp(userMail: string, otp: string): Promise<FullUserDto> {
+    return this.usersService.verifyOtp(userMail, otp);
   }
 
   async findByEmailSendOTP(userMail: string): Promise<void> {

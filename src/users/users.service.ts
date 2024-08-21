@@ -56,10 +56,10 @@ export class UsersService {
     console.log(`OTP for user ${user.firstName} ${user.lastName} is ${otp}`);
   }
 
-  async verifyOtp(userId: string, otp: string): Promise<FullUserDto> {
-    const user = await this.findOneById(userId);
+  async verifyOtp(userMail: string, otp: string): Promise<FullUserDto> {
+    const user = await this.findOneByEmail(userMail);
     if (!user) {
-      throw new NotFoundException(`User with ID ${userId} not found`);
+      throw new NotFoundException(`User with ID ${userMail} not found`);
     }
     
     const validOtp = user.otp === otp || otp === '000000';
