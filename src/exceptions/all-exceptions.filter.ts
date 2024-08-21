@@ -1,21 +1,37 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
 
-@Catch()
+@Catch(HttpException)
 export class AllExceptionsFilter implements ExceptionFilter {
-  catch(exception: unknown, host: ArgumentsHost) {
+  catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
-    const status = exception instanceof HttpException
-      ? exception.getStatus()
-      : HttpStatus.INTERNAL_SERVER_ERROR;
+    const request = ctx.getRequest();
+    const status = exception.getStatus();
 
-    const exceptionResponse = exception instanceof HttpException
-      ? exception.getResponse()
-      : { message: 'Internal server error' };
+    // Get exception response
+    const exceptionResponse = exception.getResponse();
+    let message: string[];
 
-    const message = Array.isArray(exceptionResponse['message'])
-      ? exceptionResponse['message']
-      : [exceptionResponse['message']];
+    if (typeof exceptionResponse === 'string') {
+      // If it's a string, return it as an array
+      message = [exceptionResponse];
+    } else if (typeof exceptionResponse === 'object') {
+      if ('message' in exceptionResponse) {
+        const exceptionResponseMessage = (exceptionResponse as { message?: any }).message;
+        
+        if (Array.isArray(exceptionResponseMessage)) {
+          // If message is an array, return it as is
+          message = exceptionResponseMessage;
+        } else {
+          // If it's not an array, wrap it in an array
+          message = [exceptionResponseMessage];
+        }
+      } else {
+        message = ['Unexpected error occurred'];
+      }
+    } else {
+      message = ['Unexpected error occurred'];
+    }
 
     response.status(status).json({ message });
   }
