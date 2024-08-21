@@ -128,11 +128,21 @@ export class AuthService {
 
   async findByEmailSendOTP(userMail: string): Promise<void> {
     const user = await this.usersService.findOneByEmail(userMail);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
     await this.usersService.generateOtp(user);
   }
 
   async findEmailValidateOTP(userMail: string, otp: string): Promise<FullUserDto> {
     const user = await this.usersService.findOneByEmail(userMail);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
     return this.verifyOtp(user.id, otp);
   }
 
