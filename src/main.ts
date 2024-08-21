@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { SecuritySchemeObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,11 +14,12 @@ async function bootstrap() {
       {
         type: 'http',
         scheme: 'bearer',
-        bearerFormat: 'Token',
+        bearerFormat: 'JWT',
         name: 'JWT-auth',
         description: 'Enter JWT token',
         in: 'header',
-      } as SecuritySchemeObject, 'Bearer'
+      },
+      'JWT-auth',
     )
     .build();
   const document = SwaggerModule.createDocument(app, config);

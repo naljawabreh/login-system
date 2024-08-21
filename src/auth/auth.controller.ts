@@ -50,16 +50,9 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'User profile successfully retrieved' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiBearerAuth("Bearer")
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'the JWT token',
-    required: true,
-  })
   getProfile(
     @Request() req,
-    @Headers('Authorization') Authorization: string,
   ) {
-    this.logger.log(`Authorization Header: ${Authorization}`);
     this.logger.log('User profile endpoint hit received...');
     const user = req.user;
     this.logger.log(`Request user: ${JSON.stringify(req.user)}`);
