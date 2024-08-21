@@ -29,7 +29,7 @@ export class AuthController {
     @Body() registerDto: RegisterDto,
     @Headers('language') language: string,
   ): Promise<registrationResponseDto> {
-    this.logger.log(`Registration attempt with language: ${language}`);
+    this.logger.log(`Registration attempt for ${registerDto.email} with language: ${language}`);
     const standardizedLanguage = language ? language.toLowerCase() : 'en';
     return this.authService.register(registerDto, standardizedLanguage);
   }

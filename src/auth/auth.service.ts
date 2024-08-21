@@ -36,7 +36,7 @@ export class AuthService {
     return { accessToken };
   }
 
-  async regenerateOtp(userMail: string): Promise<void> {
+  async regenerateOtp(userMail: string): Promise<registrationResponseDto> {
     const user = await this.usersService.findOneByEmail(userMail);
     
     if (!user) {
@@ -44,6 +44,15 @@ export class AuthService {
     }
 
     await this.usersService.generateOtp(user);
+    
+    const accessToken = this.jwtService.sign(
+      { userName: user.firstName, registrationState: user.registrationState },
+      { expiresIn: '1d' },
+    );
+
+    await user.save();
+    
+    return { accessToken };
   }
 
   async validateUser(loginDto: LoginDto): Promise<UserDocument | null> {
