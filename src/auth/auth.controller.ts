@@ -51,7 +51,6 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'User profile successfully retrieved' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiBearerAuth('JWT-auth')
-
   getProfile(
     @Request() req,
   ) {
@@ -144,11 +143,6 @@ export class AuthController {
   @Patch('/edit-profile')
   @ApiOperation({ summary: 'Edit user profile' })
   @ApiBearerAuth('JWT-auth')
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'The JWT token',
-    required: true,
-  })
   async updateUser(@Request() req, @Body() updateUserDto: UpdateUserDto) {
     const userMail = req.user.email;
     return this.authService.updateUser(userMail, updateUserDto);
