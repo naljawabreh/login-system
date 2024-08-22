@@ -127,14 +127,15 @@ export class AuthService {
 
   async verifyOtp(userMail: string, otp: string): Promise<LoginResponseDto> {
     this.logger.log(`AuthService: verify OTP for a user with mail: ${userMail}`);
-    const user = await this.findUserValidateOTP(userMail, otp);
+    const user = await this.usersService.verifyOtp(userMail, otp)
+    const userAll = await this.usersService.findOneByEmail(userMail)
     
     const accessToken = this.jwtService.sign(
-      { id: user._id, userName: user.firstName, registrationState: user.registrationState },
+      { id: userAll._id, userName: user.firstName, registrationState: user.registrationState },
       { expiresIn: this.configService.get<string | number>('JWT_EXPIRES') },
     );
   
-    await user.save();
+    await userAll.save();
 
     const fullUser: FullUserDto = {
       email: user.email,
@@ -196,7 +197,7 @@ export class AuthService {
 
   //
 
-  async updateUser(userMail: string, updateUserDto: UpdateUserDto) {
+  async updateUser(userMail: string, updateUserDto: UpdateUserDto): Promise<FullUserDto> {
     this.logger.log(`AuthService: updateUser for a user with mail: ${userMail}`);
     const user = await this.usersService.findOneByEmail(userMail);
 
@@ -229,7 +230,18 @@ export class AuthService {
     }
 
     await user.save();
-    return user;
+
+    const fullUser: FullUserDto = {
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phoneNumber: user.phoneNumber,
+      isResident: user.isResident,
+      photoURL: user.photoURL,
+      registrationState: user.registrationState,
+    };
+    
+    return fullUser;
   }
   
 }
