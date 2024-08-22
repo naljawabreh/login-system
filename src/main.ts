@@ -39,6 +39,9 @@ async function bootstrap() {
     },
   });
 
+  // Add global prefix '/api' to all routes
+  app.setGlobalPrefix('api');
+
   await app.listen(process.env.PORT);
 }
 bootstrap();
