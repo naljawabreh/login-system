@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Logger, NotFoundException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { ConfigService } from '@nestjs/config';
@@ -19,6 +19,7 @@ export class AuthService {
   ) {}
 
     async register(registerDto: RegisterDto, language: string): Promise<registrationResponseDto> {
+      this.logger.log(`AuthService: register user with identifier: ${registerDto.email}`);
       const { email, password, firstName, lastName, phoneNumber, isResident } = registerDto;
 
       const user = await this.usersService.create(
@@ -38,6 +39,7 @@ export class AuthService {
   }
 
   async regenerateOtp(userMail: string): Promise<registrationResponseDto> {
+    this.logger.log(`AuthService: regenerateOtp user with identifier: ${userMail}`);
     const user = await this.usersService.findOneByEmail(userMail);
     
     if (!user) {
@@ -57,12 +59,12 @@ export class AuthService {
   }
 
   async validateUser(loginDto: LoginDto): Promise<UserDocument | null> {
-    this.logger.log(`Validating user with identifier: ${loginDto.identifier}`);
+    this.logger.log(`AuthService: Validating user with identifier: ${loginDto.identifier}`);
     const user = await this.usersService.findOneByEmailOrPhoneNumber(loginDto.identifier);
     if (user) {
       const isMatch = await user.comparePassword(loginDto.password);
       if (isMatch) {
-        this.logger.log(`Password matched for user: ${user.email}`);
+        this.logger.log(`AuthService: Password matched for user: ${user.email}`);
         return user;
       } else {
         this.logger.warn(`Password mismatch for user: ${user.email}`);
@@ -74,7 +76,7 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto): Promise<LoginResponseDto> {
-    this.logger.log(`Attempting login for identifier: ${loginDto.identifier}`);
+    this.logger.log(`AuthService: Attempting login for identifier: ${loginDto.identifier}`);
     const user = await this.validateUser(loginDto);
     if (!user) {
       this.logger.warn(`Invalid credentials for identifier: ${loginDto.identifier}`);
@@ -88,7 +90,7 @@ export class AuthService {
   
     await user.save();
   
-    this.logger.log(`User logged in: ${user.email}`);
+    this.logger.log(`AuthService: User logged in: ${user.email}`);
   
     if (user.registrationState === 'pending') {
       await this.usersService.generateOtp(user);
@@ -124,7 +126,8 @@ export class AuthService {
   }
 
   async verifyOtp(userMail: string, otp: string): Promise<LoginResponseDto> {
-    const user = await this.usersService.findOneByEmail(userMail);
+    this.logger.log(`AuthService: verify OTP for a user with mail: ${userMail}`);
+    const user = await this.findUserValidateOTP(userMail, otp);
     
     const accessToken = this.jwtService.sign(
       { id: user._id, userName: user.firstName, registrationState: user.registrationState },
@@ -150,6 +153,7 @@ export class AuthService {
   }
 
   async findByEmailSendOTP(userMail: string): Promise<void> {
+    this.logger.log(`AuthService: findByEmailSendOTP for a user with mail: ${userMail}`);
     const user = await this.usersService.findOneByEmail(userMail);
 
     if (!user) {
@@ -160,6 +164,7 @@ export class AuthService {
   }
 
   async findEmailValidateOTP(userMail: string, otp: string): Promise<LoginResponseDto> {
+    this.logger.log(`AuthService: findEmailValidateOTP for a user with mail: ${userMail}`);
     const user = await this.usersService.findOneByEmail(userMail);
 
     if (!user) {
@@ -170,6 +175,7 @@ export class AuthService {
   }
 
   async findUserValidateOTP(userMail: string, otp: string): Promise<UserDocument> {
+    this.logger.log(`AuthService: findUserValidateOTP for a user with mail: ${userMail}`);
     const user = await this.usersService.findOneByEmail(userMail);
 
     if (!user) {
@@ -184,12 +190,14 @@ export class AuthService {
   }
 
   async logout(user: UserDocument) {
+    this.logger.log(`AuthService: logout for a user with mail: ${user.email}`);
     await this.usersService.invalidateTokensForUser(user.id);
   }
 
   //
 
   async updateUser(userMail: string, updateUserDto: UpdateUserDto) {
+    this.logger.log(`AuthService: updateUser for a user with mail: ${userMail}`);
     const user = await this.usersService.findOneByEmail(userMail);
 
     if (!user) {
@@ -206,6 +214,13 @@ export class AuthService {
     }
 
     if (updateUserDto.phoneNumber) {
+      const existingUserWithPhoneNumber = await this.usersService.findOneByPhoneNumber(updateUserDto.phoneNumber);
+      
+      // Ensure the found user is not the same as the current user
+      if (existingUserWithPhoneNumber && existingUserWithPhoneNumber.email !== userMail) {
+        throw new ConflictException('Phone number is already in use by another user');
+      }
+      
       user.phoneNumber = updateUserDto.phoneNumber;
     }
 
