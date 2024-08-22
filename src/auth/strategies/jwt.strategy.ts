@@ -19,13 +19,21 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-  this.logger.log(`Validating JWT payload: ${JSON.stringify(payload)}`);
-  const user = await this.usersService.findOneById(payload.id);
-  if (!user) {
-    this.logger.error(`User not found for payload: ${JSON.stringify(payload.id)}`);
-    throw new UnauthorizedException();
-  }
-  this.logger.log(`User validated: ${JSON.stringify(user)}`);
-  return user;
+    this.logger.log(`Validating JWT payload: ${JSON.stringify(payload)}`);
+    
+    // Check if payload has the expected structure
+    if (!payload || !payload.id) {
+      this.logger.error(`Invalid JWT payload: ${JSON.stringify(payload)}`);
+      throw new UnauthorizedException();
+    }
+  
+    const user = await this.usersService.findOneById(payload.id);
+    if (!user) {
+      this.logger.error(`User not found for payload: ${JSON.stringify(payload.id)}`);
+      throw new UnauthorizedException();
+    }
+  
+    this.logger.log(`User validated: ${JSON.stringify(user)}`);
+    return user;
   }
 }

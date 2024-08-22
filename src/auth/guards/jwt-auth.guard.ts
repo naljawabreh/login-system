@@ -6,11 +6,14 @@ import { AuthGuard } from '@nestjs/passport';
 export class JwtAuthGuard extends AuthGuard('jwt') {
     private readonly logger = new Logger(JwtAuthGuard.name);
 
+    
     canActivate(context: ExecutionContext) {
-      this.logger.log('Checking JWT authentication');
+      this.logger.log('Checking JWT authentication..');
+      const request = context.switchToHttp().getRequest();
+      const authHeader = request.headers['authorization'];
+      this.logger.log(`Authorization Header: ${authHeader}`);
       return super.canActivate(context);
     }
-  
     handleRequest(err, user, info) {
       if (err) {
         this.logger.error(`Error in JWT authentication: ${err.message}`);
