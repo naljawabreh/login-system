@@ -9,8 +9,8 @@ import { FullUserDto } from 'src/auth/dto/user.dto';
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async findOneByEmail(email: string): Promise<UserDocument | undefined> {
-    return this.userModel.findOne({ email }).exec();
+  async findOneByEmail(email: string): Promise<UserDocument | null> {
+    return this.userModel.findOne({ email, isDeleted: false }).exec();
   }
 
   async findOneByPhoneNumber(phoneNumber: string): Promise<UserDocument | undefined> {

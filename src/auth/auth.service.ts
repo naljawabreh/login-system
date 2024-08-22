@@ -80,7 +80,7 @@ export class AuthService {
     const user = await this.validateUser(loginDto);
     if (!user) {
       this.logger.warn(`Invalid credentials for identifier: ${loginDto.identifier}`);
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Invalid email or password');
     }
   
     const accessToken = this.jwtService.sign(
@@ -243,5 +243,31 @@ export class AuthService {
     
     return fullUser;
   }
+
+  async softDeleteUser(userMail: string){
+    const user = await this.usersService.findOneByEmail(userMail);
+    if (!user || user.isDeleted) {
+      throw new NotFoundException('User not found or already deleted');
+    }
+    
+    user.isDeleted = true;
+    user.deletedAt = new Date();
+    await user.save();
+
+    return { message: 'User deleted successfully' };
+  }
+
+  async restoreUser(userMail: string) {
+    const user = await this.usersService.findOneByEmail(userMail);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
   
+    user.isDeleted = false;
+    user.deletedAt = null;
+    await user.save();
+    
+    return { message: 'User restored successfully' };
+  }
+
 }

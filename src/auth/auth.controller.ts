@@ -148,4 +148,22 @@ export class AuthController {
     return this.authService.updateUser(userMail, updateUserDto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Patch('/delete-user')
+  @ApiOperation({ summary: 'Soft delete user' })
+  @ApiBearerAuth('JWT-auth')
+  async deleteUser(@Request() req) {
+    const userMail = req.user.email;
+    return this.authService.softDeleteUser(userMail);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('/restore-user')
+  @ApiOperation({ summary: 'Restore deleted user' })
+  @ApiBearerAuth('JWT-auth')
+  async restoreUser(@Request() req) {
+    const userMail = req.user.email;
+    return this.authService.restoreUser(userMail);
+  }
+
 }

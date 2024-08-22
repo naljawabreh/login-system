@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Query } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 
 export type UserDocument = User & Document & {
@@ -39,18 +39,39 @@ export class User {
 
   @Prop({ required: true, default: Date.now })
   registrationDate: Date;
-
+  
   @Prop({ required: true, default: "en" })
   language: string;
-
+  
   @Prop({ required: false })
   photoURL: string;
   
   @Prop({ required: true, default: false })
   isResident: boolean;
+  
+  @Prop({ required: true, default: false })
+  isDeleted:  Boolean;
+  
+  @Prop({ required: true, default: null })
+  deletedAt: Date;
 }
 
+
 const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.index({ isDeleted: 1 });
+
+// Define a function to apply the filter
+function filterDeleted(this: Query<any, any>) {
+  this.where({ isDeleted: false });
+  return this;
+}
+
+// Apply the filter in the pre-find middleware
+UserSchema.pre<Query<any, any>>(/^find/, function (next) {
+  filterDeleted.call(this);
+  next();
+});
 
 UserSchema.pre<UserDocument>('save', async function (next) {
   const user = this as UserDocument;
