@@ -123,8 +123,30 @@ export class AuthService {
     };
   }
 
-  async verifyOtp(userMail: string, otp: string): Promise<FullUserDto> {
-    return this.usersService.verifyOtp(userMail, otp);
+  async verifyOtp(userMail: string, otp: string): Promise<LoginResponseDto> {
+    const user = await this.usersService.findOneByEmail(userMail);
+    
+    const accessToken = this.jwtService.sign(
+      { id: user._id, userName: user.firstName, registrationState: user.registrationState },
+      { expiresIn: this.configService.get<string | number>('JWT_EXPIRES') },
+    );
+  
+    await user.save();
+
+    const fullUser: FullUserDto = {
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phoneNumber: user.phoneNumber,
+      isResident: user.isResident,
+      photoURL: user.photoURL,
+      registrationState: user.registrationState,
+    };
+
+    return {
+      accessToken,
+      user: fullUser,
+    };
   }
 
   async findByEmailSendOTP(userMail: string): Promise<void> {
@@ -137,7 +159,7 @@ export class AuthService {
     await this.usersService.generateOtp(user);
   }
 
-  async findEmailValidateOTP(userMail: string, otp: string): Promise<FullUserDto> {
+  async findEmailValidateOTP(userMail: string, otp: string): Promise<LoginResponseDto> {
     const user = await this.usersService.findOneByEmail(userMail);
 
     if (!user) {

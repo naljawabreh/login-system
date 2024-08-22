@@ -82,6 +82,7 @@ export class UsersService {
       registrationState: user.registrationState,
     };
     
+    
     return fullUser;
   }
   

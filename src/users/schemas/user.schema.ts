@@ -6,7 +6,9 @@ export type UserDocument = User & Document & {
   comparePassword: (candidatePassword: string) => Promise<boolean>;
 };
 
-@Schema()
+@Schema({
+  timestamps: true,
+})
 export class User {
   @Prop({ required: true, unique: true })
   email: string;

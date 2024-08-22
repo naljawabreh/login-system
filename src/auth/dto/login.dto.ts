@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, Matches, isString } from 'class-validator';
 // Data Transfer Object
 export class LoginDto {
-    @ApiProperty({ example: '0123456789', description: 'The email or mobile number of the user' })
+    @ApiProperty({ example: 'john.doe@example.com', description: 'The email of the user' })
     @IsString()
     @IsNotEmpty()
     @Matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$|^(0097[02]5)\d{8}$/, { message: 'Identifier must be a valid email or mobile number' })
