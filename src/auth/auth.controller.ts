@@ -143,7 +143,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Patch('/edit-profile')
   @ApiOperation({ summary: 'Edit user profile' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT-auth')
   async updateUser(@Request() req, @Body() updateUserDto: UpdateUserDto) {
     const userMail = req.user.email;
     return this.authService.updateUser(userMail, updateUserDto);
