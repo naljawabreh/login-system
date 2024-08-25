@@ -1,8 +1,9 @@
+import * as fs from 'fs';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './exceptions/all-exceptions.filter';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Logger  } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -47,5 +48,16 @@ async function bootstrap() {
   });
 
   await app.listen(process.env.PORT);
+
+
+  // Check if the environment is set to daemon
+  if (process.env.NODE_ENV === 'daemon') {
+    const logStream = fs.createWriteStream('/loginBE/logfile.log', { flags: 'a' });
+    app.useLogger(new Logger());
+    // Redirect console logs to the log file
+    console.log = (...args) => logStream.write(args.join(' ') + '\n');
+  } else {
+    app.useLogger(['log', 'error', 'warn']);
+  }
 }
 bootstrap();
