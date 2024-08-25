@@ -1,6 +1,6 @@
 import { Controller, Get, Request, Logger } from '@nestjs/common';
-import { ScheduleDTO } from 'src/auth/dto/schedule.dto';
 import { ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { ScheduleDTO } from './dto/schedule.dto';
 
 
 

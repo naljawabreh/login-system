@@ -41,5 +41,3 @@ export class ScheduleDTO {
     @ArrayNotEmpty()
     from: LocationDTO[];
 }
-
-

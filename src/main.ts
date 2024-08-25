@@ -6,7 +6,10 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
+
+  // Add global prefix '/api' to all routes
+  app.setGlobalPrefix('api');
+
   app.useGlobalPipes(new ValidationPipe({ 
     whitelist: true, 
     forbidNonWhitelisted: true,
@@ -33,14 +36,11 @@ async function bootstrap() {
     )
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('loginAPI', app, document, {
+  SwaggerModule.setup('api/loginAPI', app, document, {
     swaggerOptions: {
         persistAuthorization: true,
     },
   });
-
-  // Add global prefix '/api' to all routes
-  app.setGlobalPrefix('api');
 
   await app.listen(process.env.PORT);
 }
