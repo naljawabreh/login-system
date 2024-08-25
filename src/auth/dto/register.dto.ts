@@ -23,7 +23,7 @@ export class RegisterDto {
     @IsString()
     readonly lastName: string;
     
-    @ApiProperty({ example: '1234567890', description: 'The phone number of the user' })
+    @ApiProperty({ example: '009705XXXXXXXX', description: 'The phone number of the user' })
     @IsString()
     @IsNotEmpty()
     @Matches(/^(0097[02]5)\d{8}$/, {
