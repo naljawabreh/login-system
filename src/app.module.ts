@@ -5,7 +5,6 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { TransportModule } from './transport/transport.module';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),

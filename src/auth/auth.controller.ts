@@ -1,4 +1,14 @@
-import { Controller, Post, Body, UseGuards, Get, Request, Logger, Headers, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Get,
+  Request,
+  Logger,
+  Headers,
+  Patch,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RegisterDto } from './dto/register.dto';
@@ -6,8 +16,14 @@ import { LoginDto } from './dto/login.dto';
 import { VerifyOtpDto, RegenerateOtpDto } from './dto/verify-otp.dto';
 import { ForgotPasswordDto } from './dto/forgot-pass.dto';
 import { ResetPasswordDto } from './dto/reset-pass.dto';
-import { ApiTags, ApiBearerAuth, ApiResponse, ApiOperation, ApiHeader } from '@nestjs/swagger';
-import { registrationResponseDto, FullUserDto} from './dto/user.dto';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiResponse,
+  ApiOperation,
+  ApiHeader,
+} from '@nestjs/swagger';
+import { registrationResponseDto, FullUserDto } from './dto/user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @ApiTags('login')
@@ -16,7 +32,6 @@ export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
   constructor(private readonly authService: AuthService) {}
-
 
   @Post('/login')
   @ApiOperation({ summary: 'Login a user' })
@@ -40,7 +55,9 @@ export class AuthController {
     @Body() registerDto: RegisterDto,
     @Headers('language') language: string,
   ): Promise<registrationResponseDto> {
-    this.logger.log(`Registration attempt for ${registerDto.email} with language: ${language}`);
+    this.logger.log(
+      `Registration attempt for ${registerDto.email} with language: ${language}`,
+    );
     const standardizedLanguage = language ? language.toLowerCase() : 'en';
     return this.authService.register(registerDto, standardizedLanguage);
   }
@@ -48,12 +65,13 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('/profile')
   @ApiOperation({ summary: 'Get user profile' })
-  @ApiResponse({ status: 200, description: 'User profile successfully retrieved' })
+  @ApiResponse({
+    status: 200,
+    description: 'User profile successfully retrieved',
+  })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiBearerAuth('JWT-auth')
-  getProfile(
-    @Request() req,
-  ) {
+  getProfile(@Request() req) {
     this.logger.log('User profile endpoint hit received...');
     const user = req.user;
     this.logger.log(`Request user: ${JSON.stringify(req.user)}`);
@@ -78,17 +96,16 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'OTP successfully verified' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiBearerAuth('JWT-auth')
-  async verifyOtp(
-    @Request() req,
-    @Body() verifyOtpDto: VerifyOtpDto,
-  ) {
+  async verifyOtp(@Request() req, @Body() verifyOtpDto: VerifyOtpDto) {
     return this.authService.verifyOtp(req.user.email, verifyOtpDto.otp);
   }
-  
 
   @Post('regenerate-otp')
   @ApiOperation({ summary: 'Regenerate and resend OTP for user' })
-  @ApiResponse({ status: 200, description: 'OTP successfully regenerated and sent' })
+  @ApiResponse({
+    status: 200,
+    description: 'OTP successfully regenerated and sent',
+  })
   @ApiResponse({ status: 404, description: 'User not found' })
   async regenerateOtp(@Body() regenerateOtpDto: RegenerateOtpDto) {
     return this.authService.regenerateOtp(regenerateOtpDto.email);
@@ -108,28 +125,31 @@ export class AuthController {
   async logout(@Request() req) {
     this.logger.log('Logout endpoint hit received...');
     const user = req.user;
-  
+
     await this.authService.logout(user);
-  
+
     this.logger.log(`User logged out: ${user.id}`);
     return { message: 'Successfully logged out' };
   }
 
   @Post('/forgot-password')
   @ApiOperation({ summary: 'Initiate forgot password process' })
-  @ApiResponse({ status: 200, description: "OTP sent to the user’s email" })
+  @ApiResponse({ status: 200, description: 'OTP sent to the user’s email' })
   @ApiResponse({ status: 404, description: 'User not found' })
   async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
     await this.authService.findByEmailSendOTP(forgotPasswordDto.email);
     return { message: 'OTP sent to your email' };
   }
-  
+
   @Post('/reset-password')
   @ApiOperation({ summary: 'Reset password using OTP' })
   @ApiResponse({ status: 200, description: 'Password successfully reset' })
   @ApiResponse({ status: 400, description: 'Invalid OTP or OTP expired' })
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
-    const user = await this.authService.findUserValidateOTP(resetPasswordDto.email, resetPasswordDto.otp);
+    const user = await this.authService.findUserValidateOTP(
+      resetPasswordDto.email,
+      resetPasswordDto.otp,
+    );
 
     // Update the user's password
     user.password = resetPasswordDto.newPassword;
@@ -165,5 +185,4 @@ export class AuthController {
     const userMail = req.user.email;
     return this.authService.restoreUser(userMail);
   }
-
 }

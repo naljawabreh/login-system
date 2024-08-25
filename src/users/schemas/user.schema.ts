@@ -2,9 +2,10 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Query } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 
-export type UserDocument = User & Document & {
-  comparePassword: (candidatePassword: string) => Promise<boolean>;
-};
+export type UserDocument = User &
+  Document & {
+    comparePassword: (candidatePassword: string) => Promise<boolean>;
+  };
 
 @Schema({
   timestamps: true,
@@ -15,7 +16,7 @@ export class User {
 
   @Prop({ required: true })
   password: string;
-  
+
   // create enum for the var
   @Prop({ required: true, enum: ['pending', 'completed'], default: 'pending' })
   registrationState: string;
@@ -39,23 +40,22 @@ export class User {
 
   @Prop({ required: true, default: Date.now })
   registrationDate: Date;
-  
-  @Prop({ required: true, default: "en" })
+
+  @Prop({ required: true, default: 'en' })
   language: string;
-  
+
   @Prop({ required: false })
   photoURL: string;
-  
+
   @Prop({ required: true, default: false })
   isResident: boolean;
-  
+
   @Prop({ required: true, default: false })
-  isDeleted:  Boolean;
-  
+  isDeleted: boolean;
+
   @Prop({ default: null })
   deletedAt: Date;
 }
-
 
 const UserSchema = SchemaFactory.createForClass(User);
 
@@ -88,7 +88,9 @@ UserSchema.pre<UserDocument>('save', async function (next) {
   }
 });
 
-UserSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
+UserSchema.methods.comparePassword = async function (
+  candidatePassword: string,
+): Promise<boolean> {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 

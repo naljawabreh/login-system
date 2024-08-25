@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
@@ -13,7 +18,9 @@ export class UsersService {
     return this.userModel.findOne({ email, isDeleted: false }).exec();
   }
 
-  async findOneByPhoneNumber(phoneNumber: string): Promise<UserDocument | undefined> {
+  async findOneByPhoneNumber(
+    phoneNumber: string,
+  ): Promise<UserDocument | undefined> {
     return this.userModel.findOne({ phoneNumber }).exec();
   }
 
@@ -32,7 +39,16 @@ export class UsersService {
     return user;
   }
 
-  async create(email: string, password: string, firstName: string, lastName: string, phoneNumber: string, isResident:boolean, language?: string, photoURL?: string): Promise<UserDocument> {
+  async create(
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string,
+    phoneNumber: string,
+    isResident: boolean,
+    language?: string,
+    photoURL?: string,
+  ): Promise<UserDocument> {
     // Check if the email is already in use
     const existingUserByEmail = await this.userModel.findOne({ email });
     if (existingUserByEmail) {
@@ -40,11 +56,22 @@ export class UsersService {
     }
 
     // Check if the phone number is already in use
-    const existingUserByPhoneNumber = await this.userModel.findOne({ phoneNumber });
+    const existingUserByPhoneNumber = await this.userModel.findOne({
+      phoneNumber,
+    });
     if (existingUserByPhoneNumber) {
       throw new BadRequestException('Phone number is already registered.');
     }
-    const user = new this.userModel({ email, password, firstName, lastName, phoneNumber, isResident, language, photoURL });
+    const user = new this.userModel({
+      email,
+      password,
+      firstName,
+      lastName,
+      phoneNumber,
+      isResident,
+      language,
+      photoURL,
+    });
     return user.save();
   }
 
@@ -65,17 +92,17 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException(`User with ID ${userMail} not found`);
     }
-    
+
     const validOtp = user.otp === otp || otp === '00000';
     if (!validOtp || user.otpExpires < new Date()) {
       throw new UnauthorizedException('Invalid or expired OTP');
     }
-    
+
     user.registrationState = 'completed';
     user.otp = undefined;
     user.otpExpires = undefined;
     await user.save();
-    
+
     const fullUser: FullUserDto = {
       email: user.email,
       firstName: user.firstName,
@@ -85,11 +112,10 @@ export class UsersService {
       photoURL: user.photoURL,
       registrationState: user.registrationState,
     };
-    
-    
+
     return fullUser;
   }
-  
+
   async invalidateTokensForUser(userId: string): Promise<void> {
     const user = await this.findOneById(userId);
     if (!user) {
@@ -98,5 +124,5 @@ export class UsersService {
     user.otp = undefined;
     user.otpExpires = undefined;
     await user.save();
-  } 
+  }
 }

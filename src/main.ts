@@ -10,17 +10,21 @@ async function bootstrap() {
   // Add global prefix '/api' to all routes
   app.setGlobalPrefix('api');
 
-  app.useGlobalPipes(new ValidationPipe({ 
-    whitelist: true, 
-    forbidNonWhitelisted: true,
-    transform: true 
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
 
   app.useGlobalFilters(new AllExceptionsFilter());
 
   const config = new DocumentBuilder()
     .setTitle('Rawabi login system API')
-    .setDescription('API documentation for regestration and login with JWT passport')
+    .setDescription(
+      'API documentation for regestration and login with JWT passport',
+    )
     .setVersion('1.0')
     .addTag('login')
     .addBearerAuth(
@@ -38,7 +42,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/loginAPI', app, document, {
     swaggerOptions: {
-        persistAuthorization: true,
+      persistAuthorization: true,
     },
   });
 

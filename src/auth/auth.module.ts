@@ -19,12 +19,12 @@ import { UserSchema } from '../users/schemas/user.schema';
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
         signOptions: {
-            expiresIn: configService.get<string | number>('JWT_EXPIRES'), 
+          expiresIn: configService.get<string | number>('JWT_EXPIRES'),
         },
       }),
       inject: [ConfigService],
     }),
-    MongooseModule.forFeature([{ name: 'User', schema: UserSchema}]),
+    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
   ],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController],
