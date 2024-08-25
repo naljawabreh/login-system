@@ -58,7 +58,7 @@ async function bootstrap() {
 
   // Configure logging based on the environment
   if (process.env.NODE_ENV === 'daemon') {
-    const logDir = '/logDirBE';
+    const logDir = 'logDirBE';
     const logFile = 'logfile.log';
     const logPath = path.join(logDir, logFile);
 
