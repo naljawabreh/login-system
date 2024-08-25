@@ -7,7 +7,10 @@ import { TransportModule } from './transport/transport.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ 
+      envFilePath: process.env.NODE_ENV === 'daemon' ? '.env.daemon' : '.env.dev',
+      isGlobal: true,
+    }),
     MongooseModule.forRoot(process.env.MONGO_URI),
     AuthModule,
     UsersModule,

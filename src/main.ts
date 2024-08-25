@@ -3,7 +3,13 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './exceptions/all-exceptions.filter';
-import { ValidationPipe, Logger  } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+
+// Load environment variables based on NODE_ENV
+const envFile = process.env.NODE_ENV === 'daemon' ? '.env.daemon' : '.env.dev';
+dotenv.config({ path: path.resolve(__dirname, '..', envFile) });
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -24,7 +30,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Rawabi login system API')
     .setDescription(
-      'API documentation for regestration and login with JWT passport',
+      'API documentation for registration and login with JWT passport',
     )
     .setVersion('1.0')
     .addTag('login')
@@ -47,10 +53,10 @@ async function bootstrap() {
     },
   });
 
+  // Listen on the port defined in the loaded environment file
   await app.listen(process.env.PORT);
 
-
-  // Check if the environment is set to daemon
+  // Configure logging based on the environment
   if (process.env.NODE_ENV === 'daemon') {
     const logStream = fs.createWriteStream('/loginBE/logfile.log', { flags: 'a' });
     app.useLogger(new Logger());
@@ -60,4 +66,5 @@ async function bootstrap() {
     app.useLogger(['log', 'error', 'warn']);
   }
 }
+
 bootstrap();
