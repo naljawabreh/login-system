@@ -52,7 +52,7 @@ export class User {
   @Prop({ required: true, default: false })
   isDeleted:  Boolean;
   
-  @Prop({ required: true, default: null })
+  @Prop({ default: null })
   deletedAt: Date;
 }
 
