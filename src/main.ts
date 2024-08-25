@@ -58,8 +58,17 @@ async function bootstrap() {
 
   // Configure logging based on the environment
   if (process.env.NODE_ENV === 'daemon') {
-    const logStream = fs.createWriteStream('/loginBE/logfile.log', { flags: 'a' });
+    const logDir = '/logDirBE';
+    const logFile = 'logfile.log';
+    const logPath = path.join(logDir, logFile);
+
+    // Create the directory if it doesn't exist
+    if (!fs.existsSync(logDir)) {
+      fs.mkdirSync(logDir, { recursive: true });
+    }
+    const logStream = fs.createWriteStream(logPath, { flags: 'a' });
     app.useLogger(new Logger());
+
     // Redirect console logs to the log file
     console.log = (...args) => logStream.write(args.join(' ') + '\n');
   } else {
