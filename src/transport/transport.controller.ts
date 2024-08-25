@@ -1,11 +1,22 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Request, Logger } from '@nestjs/common';
 import { ScheduleDTO } from 'src/auth/dto/schedule.dto';
+import { ApiResponse, ApiOperation } from '@nestjs/swagger';
 
-@Controller('schedule')
+
+
+@Controller('/schedule')
 export class TransportController {
+    private readonly logger = new Logger(TransportController.name);
 
   @Get()
-  getSchedule(): ScheduleDTO {
+  @ApiOperation({ summary: 'Get user profile' })
+  @ApiResponse({ status: 200, description: 'User profile successfully retrieved' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  getSchedule(
+    @Request() req,
+  ): ScheduleDTO {
+    this.logger.log(`getSchedule method hit`);
+
     const schedule: ScheduleDTO = {
       message: 'Schedule Information',
       cost: 9.0,
