@@ -2,6 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, Matches, isString } from 'class-validator';
 // Data Transfer Object
 export class LoginDto {
+    email(email: any, password: string) {
+        throw new Error('Method not implemented.');
+    }
     @ApiProperty({ example: 'john.doe@example.com', description: 'The email of the user' })
     @IsString()
     @IsNotEmpty()

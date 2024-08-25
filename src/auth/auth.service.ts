@@ -244,6 +244,7 @@ export class AuthService {
     return fullUser;
   }
 
+  // check if the user has active sessions or associated data that needs cleanup
   async softDeleteUser(userMail: string){
     const user = await this.usersService.findOneByEmail(userMail);
     if (!user || user.isDeleted) {

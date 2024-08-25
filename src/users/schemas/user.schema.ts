@@ -54,6 +54,7 @@ export class User {
   
   @Prop({ required: true, default: null })
   deletedAt: Date;
+    id: any;
 }
 
 

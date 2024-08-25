@@ -7,6 +7,12 @@ import { FullUserDto } from 'src/auth/dto/user.dto';
 
 @Injectable()
 export class UsersService {
+  createUser(createUser: any) {
+      throw new Error('Method not implemented.');
+  }
+  validateUserPassword(validateUserPassword: any) {
+      throw new Error('Method not implemented.');
+  }
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   async findOneByEmail(email: string): Promise<UserDocument | null> {
@@ -14,7 +20,7 @@ export class UsersService {
   }
 
   async findOneByPhoneNumber(phoneNumber: string): Promise<UserDocument | undefined> {
-    return this.userModel.findOne({ phoneNumber }).exec();
+    return this.userModel.findOne({ phoneNumber, isDeleted: false }).exec();
   }
 
   async findOneByEmailOrPhoneNumber(identifier: string): Promise<UserDocument> {
@@ -60,6 +66,7 @@ export class UsersService {
     console.log(`OTP for user ${user.firstName} ${user.lastName} is ${otp}`);
   }
 
+  // set  a retry limit for OTP validation attempts
   async verifyOtp(userMail: string, otp: string): Promise<FullUserDto> {
     const user = await this.findOneByEmail(userMail);
     if (!user) {

@@ -23,6 +23,7 @@ export class RegisterDto {
     @IsString()
     readonly lastName: string;
     
+    // ensure number is normalized without whitespace or special characters before saving it
     @ApiProperty({ example: '1234567890', description: 'The phone number of the user' })
     @IsString()
     @IsNotEmpty()
