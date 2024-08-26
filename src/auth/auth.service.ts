@@ -17,6 +17,7 @@ import {
 } from './dto/user.dto';
 import { UserDocument } from '../users/schemas/user.schema';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ChangePasswordDTO } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -346,4 +347,24 @@ export class AuthService {
 
     return { message: 'User restored successfully' };
   }
+
+  async changePassword(userId: string, changePasswordDTO: ChangePasswordDTO): Promise<any> {
+    const { currentPassword, newPassword } = changePasswordDTO;
+  
+    const user = await this.usersService.findOneById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
+    const isMatch = await user.comparePassword(currentPassword);
+    
+    if (!isMatch) {
+      throw new UnauthorizedException('Current password is incorrect.');
+    }
+  
+    user.password = newPassword;
+    await user.save();
+  
+    return { message: 'Password changed successfully' };
+  }
+
 }
