@@ -132,12 +132,13 @@ export class AuthController {
     this.logger.log(`User logged out: ${user.id}`);
     return { message: 'Successfully logged out' };
   }
-
+  
   @UseGuards(JwtAuthGuard)
   @Post('change-password')
   @ApiOperation({ summary: 'Change User Password' })
   @ApiResponse({ status: 200, description: 'Password changed successfully.' })
   @ApiResponse({ status: 400, description: 'Validation error.' })
+  @ApiBearerAuth('JWT-auth')
   async changePassword(@Body() changePasswordDTO: ChangePasswordDTO, @Request() req) {
     return this.authService.changePassword(req.user.id, changePasswordDTO);
   }
