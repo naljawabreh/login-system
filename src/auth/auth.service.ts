@@ -262,8 +262,6 @@ export class AuthService {
     await this.usersService.invalidateTokensForUser(user.id);
   }
 
-  //
-
   async updateUser(
     userMail: string,
     updateUserDto: UpdateUserDto,
@@ -328,6 +326,7 @@ export class AuthService {
       throw new NotFoundException('User not found or already deleted');
     }
 
+    this.logout(user);
     user.isDeleted = true;
     user.deletedAt = new Date();
     await user.save();
@@ -348,23 +347,25 @@ export class AuthService {
     return { message: 'User restored successfully' };
   }
 
-  async changePassword(userId: string, changePasswordDTO: ChangePasswordDTO): Promise<any> {
+  async changePassword(
+    userId: string,
+    changePasswordDTO: ChangePasswordDTO,
+  ): Promise<any> {
     const { currentPassword, newPassword } = changePasswordDTO;
-  
+
     const user = await this.usersService.findOneById(userId);
     if (!user) {
       throw new NotFoundException('User not found.');
     }
     const isMatch = await user.comparePassword(currentPassword);
-    
+
     if (!isMatch) {
       throw new UnauthorizedException('Current password is incorrect.');
     }
-  
+
     user.password = newPassword;
     await user.save();
-  
+
     return { message: 'Password changed successfully' };
   }
-
 }

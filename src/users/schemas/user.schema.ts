@@ -38,9 +38,6 @@ export class User {
   @Prop({ required: true, unique: true })
   phoneNumber: string;
 
-  @Prop({ required: true, default: Date.now })
-  registrationDate: Date;
-
   @Prop({ required: true, default: 'en' })
   language: string;
 

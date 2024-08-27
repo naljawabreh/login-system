@@ -7,7 +7,6 @@ export interface User extends Document {
   firstName: string;
   lastName: string;
   phoneNumber: string;
-  registrationDate: Date;
   language?: string;
   photoURL?: string;
   isResident: boolean;

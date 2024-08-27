@@ -7,10 +7,10 @@ export class TransportController {
   private readonly logger = new Logger(TransportController.name);
 
   @Get()
-  @ApiOperation({ summary: 'Get user profile' })
+  @ApiOperation({ summary: 'Get transportation schedule' })
   @ApiResponse({
     status: 200,
-    description: 'User profile successfully retrieved',
+    description: 'Schedule successfully retrieved',
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   getSchedule(): ScheduleDTO {
